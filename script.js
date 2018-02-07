@@ -4,28 +4,29 @@ window.addEventListener("load", function () {
     var ctx = canvas.getContext("2d");
 
     document.getElementById("testarea").innerHTML = "i can access that";
+    document.getElementById("drawarea").setAttribute("width","1200")
+    document.getElementById("drawarea").setAttribute("height","600")
     
+    var cellside = 25;
+    var board_width = 12;
+    var board_height = 12;
     
-
-    
-    
-    
-    var cellside = 30 ;
+    var closeX = 1.53;
+    var closeY = 1.76;
     
     var r = cellside*Math.sqrt(3)/2;
+    var  ix=cellside;
+    var  iy=r;
     
-    var  ix=cellside , iy=r;
     
-    var board_width = 12;
-    var board_height = 14;
     
     var hexagon = {
-        x:cellside*2,
-        y:cellside*2,
+        x:cellside,
+        y:cellside,
         cir_R : cellside,
         in_r : r,
         side : cellside
-        
+         
     }
     
     var map = [];
@@ -48,10 +49,12 @@ window.addEventListener("load", function () {
                 ctx.stroke();
                 ctx.restore();
         
+                ctx.save();
                 ctx.beginPath();
                 ctx.arc(x,y,in_r,0,2*Math.PI);
-                ctx.strokeStyle = "darkgreen"
+                ctx.strokeStyle = "rgba(32, 45, 21, 0.3)";
                 ctx.stroke();
+                ctx.restore();
         
         let hex = {
         
@@ -79,12 +82,23 @@ window.addEventListener("load", function () {
             
               
             if(i%2!=0){
-               dh2(hexagon.x*i, hexagon.y*j+hexagon.in_r, hexagon.cir_R,hexagon.in_r, hexagon.side);
-                ctx.strokeStyle ="red"
+                ctx.save();
+                
+                ctx.strokeStyle = "rgba(32, 145, 21, 1)";
+                
+               dh2(hexagon.x*i*closeX, hexagon.y*j*closeY+hexagon.in_r, hexagon.cir_R,hexagon.in_r, hexagon.side);
+                
+                ctx.restore();
+                
                 }
             if(i%2==0){
-               dh2(hexagon.x*i, hexagon.y*j+hexagon.in_r+iy, hexagon.cir_R,hexagon.in_r, hexagon.side);
-                ctx.strokeStyle ="blue"
+                ctx.save();
+                ctx.strokeStyle = "rgba(132, 45, 21, 1)";
+                
+                dh2(hexagon.x*i*closeX, hexagon.y*j*closeY+hexagon.in_r+iy, hexagon.cir_R,hexagon.in_r, hexagon.side);
+                
+                ctx.restore();
+                
             }
       }   
 }
