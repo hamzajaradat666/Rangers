@@ -1,3 +1,13 @@
+function props(){
+        
+      console.log("hii");
+      board_width =  parseInt(document.getElementById("borderwidth").value);
+      board_height = parseInt(document.getElementById("borderheight").value);
+      cellside = parseInt(document.getElementById("cellsize").value);
+        
+    }
+    
+
 window.addEventListener("load", function () {
 
     var canvas = document.getElementById("drawarea");
@@ -8,8 +18,10 @@ window.addEventListener("load", function () {
     document.getElementById("drawarea").setAttribute("height","600")
     
     var cellside = 25;
-    var board_width = 12;
-    var board_height = 12;
+    var initPos = 1;
+    var board_width = initPos + 12;
+    var board_height = initPos + 12;
+    
     
     var closeX = 1.53;
     var closeY = 1.76;
@@ -31,7 +43,6 @@ window.addEventListener("load", function () {
     
     var map = [];
 
-    
     
     
     function dh2(x,y,cir_R,in_r,side){
@@ -81,9 +92,9 @@ window.addEventListener("load", function () {
     
    
        
-    for(var i=1; i<board_width;i+=1){
+    for(var i=initPos; i<board_width;i+=1){
                
-        for(var j=1; j<board_height;j+=1){
+        for(var j=initPos; j<board_height;j+=1){
             
               
             if(i%2!=0){
