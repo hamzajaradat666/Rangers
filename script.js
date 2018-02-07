@@ -18,7 +18,7 @@ window.addEventListener("load", function () {
     var  ix=cellside;
     var  iy=r;
     
-    
+ 
     
     var hexagon = {
         x:cellside,
@@ -52,7 +52,7 @@ window.addEventListener("load", function () {
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(x,y,in_r,0,2*Math.PI);
-                ctx.strokeStyle = "rgba(32, 45, 21, 0.3)";
+                ctx.strokeStyle = "rgba(0, 255, 0, 0.3)";
                 ctx.stroke();
                 ctx.restore();
         
@@ -72,6 +72,11 @@ window.addEventListener("load", function () {
                 
  }
     
+    function hoverhex(){
+        
+        
+    }
+    
     
     
    
@@ -84,7 +89,7 @@ window.addEventListener("load", function () {
             if(i%2!=0){
                 ctx.save();
                 
-                ctx.strokeStyle = "rgba(32, 145, 21, 1)";
+                ctx.strokeStyle = "rgba(200, 100, 100, 1)";
                 
                dh2(hexagon.x*i*closeX, hexagon.y*j*closeY+hexagon.in_r, hexagon.cir_R,hexagon.in_r, hexagon.side);
                 
@@ -93,7 +98,7 @@ window.addEventListener("load", function () {
                 }
             if(i%2==0){
                 ctx.save();
-                ctx.strokeStyle = "rgba(132, 45, 21, 1)";
+                ctx.strokeStyle = "rgba(100, 100, 200, 1)";
                 
                 dh2(hexagon.x*i*closeX, hexagon.y*j*closeY+hexagon.in_r+iy, hexagon.cir_R,hexagon.in_r, hexagon.side);
                 
