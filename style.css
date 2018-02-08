@@ -1,5 +1,14 @@
 
 .props {
-    margin-left:500px;
-    background-color: blue;
+    
+    border: solid;
+    max-width: 600px;
+    min-height: 300px;
+    
+   
+}
+
+input{
+    
+    float: right;
 }

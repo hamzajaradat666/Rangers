@@ -3,7 +3,7 @@
 <title>Tests</title>
     
     <head>
-    <link href="style.css" type="text/css">
+    <link href="style.css" type="text/css" rel="stylesheet">
     <script src="script.js"></script>
     <script src="events&coll.js"></script>
     </head>
@@ -12,15 +12,19 @@
     <body>
     
         <div class="testarea" id="testarea">Hello</div>
-        <canvas id="drawarea" width="1280" height="9000" style="border: 1px solid black;"></canvas>
+        <canvas id="drawarea" width="1280" height="900" style="border: 1px solid black;"></canvas>
         
         
         
         <div class="props">
-            <button class="gui-button" onclick="props()">Apply</button>
-            <label>Border Width<input id="borderwidth" type="text"></label>
-            <label>Border Height<input id="borderheight" type="text"></label>
-            <label>Cell Size<input id="cellsize"type="text"></label>
+            
+            <label>Border Width<input id="borderwidth" type="text" value="2"></label><br><br>
+            <label>Border Height<input id="borderheight" type="text" value="12" ></label><br><br>
+            <label>Initial Posision X<input id="initposX" type="text" value="4" ></label><br><br>
+            <label>Initial Posision Y<input id="initposY" type="text" value="1" ></label><br><br>
+            <label>Cell Size<input id="cell" type="text" value="1" ></label><br><br>
+            <button class="gui-button" onclick="props()">Apply</button><br><br>
+            
             </div>
         
     </body>
