@@ -1,4 +1,4 @@
-    var cellside = 15;
+    var cellside = 100;
     var initPosX = 1;
     var initPosY = 1;
     var board_width = initPosX + 12;
@@ -25,7 +25,7 @@
         board_height = parseInt(document.getElementById("borderheight").value);
         initPosX = parseInt(document.getElementById("initposX").value);
         initPosY = parseInt(document.getElementById("initposY").value);
-        /*cellside = parseInt(document.getElementById("cell").value);*/
+        cellside = parseInt(document.getElementById("cell").value);
 
 
 
