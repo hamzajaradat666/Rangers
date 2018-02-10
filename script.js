@@ -1,14 +1,21 @@
-    var cellside = 100;
+    var canvas = document.getElementById("drawarea");
+    var ctx = canvas.getContext("2d");
+    var ctx2 = canvas.getContext("2d");
+
+    
+    var cellside = 20;
     var initPosX = 1;
     var initPosY = 1;
-    var board_width = initPosX + 12;
-    var board_height = initPosY + 12;
+    var board_width = initPosX + 3;
+    var board_height = initPosY + 3;
     var closeX = 1.53;
     var closeY = 1.76;
     var r = cellside * Math.sqrt(3) / 2;
     var ix = cellside;
     var iy = r;
+
     var hexagon = {
+        
         x: cellside,
         y: cellside,
         cir_R: cellside,
@@ -16,46 +23,25 @@
         side: cellside
 
     }
+    
     var map = [];
 
-    function props() {
 
 
+function props() {
+
+        map = [];
         board_width = parseInt(document.getElementById("borderwidth").value);
         board_height = parseInt(document.getElementById("borderheight").value);
         initPosX = parseInt(document.getElementById("initposX").value);
         initPosY = parseInt(document.getElementById("initposY").value);
-        cellside = parseInt(document.getElementById("cell").value);
+        cellside = parseInt(document.getElementById("cellsize1").value);
 
 
 
     }
 
-
-    window.addEventListener("load", function () {
-
-        setInterval(update, 1000 / 30);
-
-
-
-
-    })
-
-    function update() {
-
-
-
-
-        var canvas = document.getElementById("drawarea");
-        var ctx = canvas.getContext("2d");
-        var ctx2 = canvas.getContext("2d");
-
-        document.getElementById("testarea").innerHTML = "i can access that";
-        document.getElementById("drawarea").setAttribute("width", "1200")
-        document.getElementById("drawarea").setAttribute("height", "600")
-
-
-        function drawMap(x, y, cir_R, in_r, side) {
+function theDrawMap(x, y, cir_R, in_r, side) {
 
             ctx.save();
             ctx.beginPath();
@@ -83,62 +69,111 @@
                 dy: y,
                 R: cir_R,
                 r: in_r,
-                hexside: side,
+                side: side,
 
             }
 
-            map.push(hex)
-
-
-
+        if(map.length<board_height*board_width){  
+                map.push(hex);
+                console.log(map)
+        
         }
-
-        function hoverhex() {
-
-
-        }
+    }
 
 
-
-
-
-        for (var i = initPosX; i < board_width + initPosX; i += 1) {
-
+function drawMap(){
+    
+    
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (var i = initPosX; i < board_width + initPosX; i += 1) {
             for (var j = initPosY; j < board_height + initPosY; j += 1) {
-
-
                 if (i % 2 != 0) {
                     ctx.save();
-
                     ctx.strokeStyle = "rgba(200, 100, 100, 1)";
-
-                    drawMap(hexagon.x * i * closeX, hexagon.y * j * closeY + hexagon.in_r, hexagon.cir_R, hexagon.in_r, hexagon.side);
-
+                     theDrawMap(hexagon.x * i * closeX, hexagon.y * j * closeY + hexagon.in_r, hexagon.cir_R, hexagon.in_r, hexagon.side);
                     ctx.restore();
-
                 }
                 if (i % 2 == 0) {
                     ctx.save();
                     ctx.strokeStyle = "rgba(100, 100, 200, 1)";
-
-                    drawMap(hexagon.x * i * closeX, hexagon.y * j * closeY + hexagon.in_r + iy, hexagon.cir_R, hexagon.in_r, hexagon.side);
-
+                     theDrawMap(hexagon.x * i * closeX, hexagon.y * j * closeY + hexagon.in_r + iy, hexagon.cir_R, hexagon.in_r, hexagon.side);
                     ctx.restore();
-
                 }
             }
         }
+    
+}
+function fillHex(hex){
+            
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(hex.dx, hex.dy);
+            ctx.moveTo(hex.dx - hex.R, hex.dy)
+            ctx.lineTo(hex.dx - hex.side / 2, hex.dy - hex.r)
+            ctx.lineTo(hex.dx + hex.side / 2, hex.dy - hex.r)
+            ctx.lineTo(hex.dx + hex.R, hex.dy);
+            ctx.lineTo(hex.dx + hex.side / 2, hex.dy + r)
+            ctx.lineTo(hex.dx - hex.side / 2, hex.dy + hex.r)
+            ctx.closePath();
+            ctx.fillStyle = "rgba(200,0,0,0.3)"
+            ctx.fill();
+            ctx.restore();
+    
+}
+function strokeHex(hex){
+            
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(hex.dx, hex.dy);
+            ctx.moveTo(hex.dx - hex.R, hex.dy)
+            ctx.lineTo(hex.dx - hex.side / 2, hex.dy - hex.r)
+            ctx.lineTo(hex.dx + hex.side / 2, hex.dy - hex.r)
+            ctx.lineTo(hex.dx + hex.R, hex.dy);
+            ctx.lineTo(hex.dx + hex.side / 2, hex.dy + r)
+            ctx.lineTo(hex.dx - hex.side / 2, hex.dy + hex.r)
+            ctx.closePath();
+    
+            ctx.stroke();
+            ctx.restore();
+    
+}
 
-
+function clickHex(){
+    
+    for(var i=0; i<map.length;i++){
+    if(hexCollision(map[i])){
+        fillHex(map[i]);  
+    }
+    /*else{
+        console.log("fjsai")
+        strokeHex(map[i]);
+    
+       } */
+        
+    
+}
+}
+function update() {
+       drawMap();
+       clickHex();
 
     }
 
-
-    /* // angle in radians
-        var angleRadians = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-
-        // angle in degrees
-        var angleDeg = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+window.addEventListener("load", function () {
+     
         
-        console.log(Math.atan2(p2.y - p1.y, p2.x - p1.x))
-*/
+     
+     
+        document.getElementById("testarea").innerHTML = "i can access that";
+        document.getElementById("drawarea").setAttribute("width", "1200")
+        document.getElementById("drawarea").setAttribute("height", "600") 
+     
+        
+        setInterval(update, 1000 / 30);
+
+    
+
+         
+
+
+})

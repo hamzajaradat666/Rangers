@@ -62,6 +62,22 @@ function circleCollision(circle1,circle2){
     }
 
 //----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+function hexCollision(hex){
+    
+    var dx = hex.dx - mx;
+    var dy = hex.dy - my;
+    var distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < hex.r) {
+        return true;
+    }
+    
+    }
+
+//----------------------------------------------------------------------------------------
+
 document.addEventListener('keydown', function(e){
 
 keys[e.keyCode]=true;
