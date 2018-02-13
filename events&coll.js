@@ -64,7 +64,7 @@ function circleCollision(circle1,circle2){
 //----------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------
-function hexCollision(hex){
+function hexhover(hex){
     
     var dx = hex.dx - mx;
     var dy = hex.dy - my;
@@ -73,6 +73,15 @@ function hexCollision(hex){
     if (distance < hex.r) {
         return true;
     }
+    
+    }
+
+function hexClick(hex){
+    
+   if(md==true)
+       return true;
+    
+    else return false
     
     }
 

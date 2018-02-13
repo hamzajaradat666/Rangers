@@ -138,20 +138,29 @@ function strokeHex(hex){
     
 }
 
+function attatchObject(hex){
+    console.log("check")
+    fillHex(hex);
+    
+}
+
 function clickHex(){
     
     for(var i=0; i<map.length;i++){
-    if(hexCollision(map[i])){
+        
+    if(hexhover(map[i])){
         fillHex(map[i]);  
     }
-    /*else{
-        console.log("fjsai")
-        strokeHex(map[i]);
-    
-       } */
+        
+    if(hexhover(map[i])==true&& hexClick(map[i])==true){
+        
+        attatchObject(map[i]);
+        
+    }
         
     
 }
+    
 }
 function update() {
        drawMap();
