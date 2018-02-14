@@ -13,7 +13,7 @@
     var r = cellside * Math.sqrt(3) / 2;
     var ix = cellside;
     var iy = r;
-
+    var cellNum = 1;
     var hexagon = {
         
         x: cellside,
@@ -25,12 +25,14 @@
     }
     
     var map = [];
+    
 
 
 
 function props() {
 
         map = [];
+        cellNum = 1;
         board_width = parseInt(document.getElementById("borderwidth").value);
         board_height = parseInt(document.getElementById("borderheight").value);
         initPosX = parseInt(document.getElementById("initposX").value);
@@ -40,6 +42,11 @@ function props() {
 
 
     }
+function check_console_log(){
+    
+    console.log(map);
+    
+}
 
 function theDrawMap(x, y, cir_R, in_r, side) {
 
@@ -62,7 +69,7 @@ function theDrawMap(x, y, cir_R, in_r, side) {
             ctx.strokeStyle = "rgba(0, 255, 0, 0.3)";
             ctx.stroke();
             ctx.restore();
-
+            
             let hex = {
 
                 dx: x,
@@ -70,12 +77,16 @@ function theDrawMap(x, y, cir_R, in_r, side) {
                 R: cir_R,
                 r: in_r,
                 side: side,
+                cellNum: cellNum,
+                isSelected:false,
+                isGoto:false,
 
             }
 
         if(map.length<board_height*board_width){  
                 map.push(hex);
-                console.log(map)
+                cellNum++;
+                
         
         }
     }
@@ -139,8 +150,15 @@ function strokeHex(hex){
 }
 
 function attatchObject(hex){
-    console.log("check")
-    fillHex(hex);
+    
+    
+            
+    if(hex.isSelected==false)
+        map.isSelected==true;
+        fillHex(hex);
+            
+            
+    
     
 }
 
@@ -173,7 +191,7 @@ window.addEventListener("load", function () {
         
      
      
-        document.getElementById("testarea").innerHTML = "i can access that";
+        document.getElementById("testarea").innerHTML = "Welcome To Rangers";
         document.getElementById("drawarea").setAttribute("width", "1200")
         document.getElementById("drawarea").setAttribute("height", "600") 
      

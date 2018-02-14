@@ -1,12 +1,74 @@
+body{
+    
+    background-color: black;
+    transition: 1.5s;
+    
+}
+body:hover{
+    
+    background-color: #414141;
+    transition: 1.5s;
+    
+}
+.testarea{
+    
+    margin-bottom: 10px;
+    background-color: lightcoral;
+    
+}
 
+canvas{
+    
+    background-color: #716f8e;
+    border: solid 10px darkred;
+    border-radius: 10px;
+    transition: 1.5s;
+    
+}
+canvas:hover{
+    margin-left: 18%;
+    background-color: white;
+    transition: 1.5s;
+    
+}
 .props {
     
-    border: solid;
+    border: ridge 10px rgb(144, 198, 238);
     max-width: 600px;
-    min-height: 300px;
+    min-height: 200px;
+    padding: 10px;
+    background-color: rgb(153, 51, 51);
+    transition: 1.5s;
+    
     
    
 }
+
+.props:hover {
+    
+   
+    background-color: rgb(162, 19, 19);
+    border: groove 10px rgb(65, 239, 65);
+    border-radius: 20px;
+    transition: 1.5s;
+    
+   
+}
+button{
+    
+    border-radius: 10px;
+    background-color: rgb(18, 8, 44);
+    color: #224005;
+    transition: 1.5s;
+}
+button:hover{
+    
+    border-radius: 10px;
+    background-color: rgb(8, 44, 44);
+    color: rgb(124, 252, 0);
+    transition: 1.5s;
+}
+
 
 input{
     

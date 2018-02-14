@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html>
 <title>Tests</title>
-    
-    <head>
+
+<head>
     <link href="style.css" type="text/css" rel="stylesheet">
-    
-    </head>
+
+</head>
 
 
-    <body>
-    
-        <div class="testarea" id="testarea">Hello</div>
-        <canvas id="drawarea" width="1280" height="900" style="border: 1px solid black;"></canvas>
-        
-        
-        
-        <div class="props">
-            
-            <label>Cell Size<input id="cellsize1" type="text" value="1" ></label><br><br>
-            
-            <label>Border Width<input id="borderwidth" type="text" value="10"></label><br><br>
-            <label>Border Height<input id="borderheight" type="text" value="8" ></label><br><br>
-            <label>Initial Posision X<input id="initposX" type="text" value="2" ></label><br><br>
-            <label>Initial Posision Y<input id="initposY" type="text" value="1" ></label><br><br>
-            
-            <button class="gui-button" onclick="props()">Apply Settings</button><br><br>
-            
-            
-            </div>
-        <script src="script.js"></script>
+<body>
+
+    <div class="testarea" id="testarea">Hello</div>
+    <canvas id="drawarea" width="1280" height="900"></canvas>
+
+
+
+    <div class="props">
+
+        <label>Cell Size<input id="cellsize1" type="text" value="1" ></label><br><br>
+
+        <label>Border Width<input id="borderwidth" type="text" value="10"></label><br><br>
+        <label>Border Height<input id="borderheight" type="text" value="10" ></label><br><br>
+        <label>Initial Posision X<input id="initposX" type="text" value="5" ></label><br><br>
+        <label>Initial Posision Y<input id="initposY" type="text" value="1" ></label><br><br>
+
+        <button class="gui-button" onclick="props()">Apply Settings</button><br><br>
+        <button class="gui-button" onclick="check_console_log()">Check Console</button><br><br>
+
+
+    </div>
+    <script src="script.js"></script>
     <script src="events&coll.js"></script>
-    </body>
+</body>
 
 </html>
