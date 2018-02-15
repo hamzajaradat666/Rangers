@@ -1,7 +1,9 @@
     var canvas = document.getElementById("drawarea");
     var ctx = canvas.getContext("2d");
     var ctx2 = canvas.getContext("2d");
-
+    
+    var fps = 30;
+    var time = 0;
     
     var cellside = 20;
     var initPosX = 1;
@@ -63,12 +65,12 @@ function theDrawMap(x, y, cir_R, in_r, side) {
             ctx.stroke();
             ctx.restore();
 
-            ctx.save();
+            /*ctx.save();
             ctx.beginPath();
             ctx.arc(x, y, in_r, 0, 2 * Math.PI);
-            ctx.strokeStyle = "rgba(0, 255, 0, 0.3)";
+            ctx.strokeStyle = "rgba(255, 0, 235, 0.3)";
             ctx.stroke();
-            ctx.restore();
+            ctx.restore();*/
             
             let hex = {
 
@@ -80,6 +82,7 @@ function theDrawMap(x, y, cir_R, in_r, side) {
                 cellNum: cellNum,
                 isSelected:false,
                 isGoto:false,
+                isPassable:false
 
             }
 
@@ -96,8 +99,11 @@ function drawMap(){
     
     
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    
     for (var i = initPosX; i < board_width + initPosX; i += 1) {
+        
             for (var j = initPosY; j < board_height + initPosY; j += 1) {
+                
                 if (i % 2 != 0) {
                     ctx.save();
                     ctx.strokeStyle = "rgba(200, 100, 100, 1)";
@@ -149,20 +155,17 @@ function strokeHex(hex){
     
 }
 
-function attatchObject(hex){
-    
-    
-            
-    if(hex.isSelected==false)
-        map.isSelected==true;
-        fillHex(hex);
-            
-            
-    
-    
-}
 
-function clickHex(){
+
+function checkMap(){
+    
+    fps++;
+    if(fps>30){
+        time++;
+        fps=0;
+    }
+    if(time>3600)
+        time=0;
     
     for(var i=0; i<map.length;i++){
         
@@ -170,11 +173,29 @@ function clickHex(){
         fillHex(map[i]);  
     }
         
-    if(hexhover(map[i])==true&& hexClick(map[i])==true){
+    if(hexhover(map[i])==true && hexClick(map[i])==true && fps%3==0){
         
-        attatchObject(map[i]);
+        if(!map[i].isSelected){
+            console.log("Locked")
+            map[i].isSelected=true;
+       
+        }
+        
+        else{
+            console.log("Unlocked")
+            map[i].isSelected=false;
+       
+        }
         
     }
+        
+    if(map[i].isSelected){
+            
+            fillHex(map[i]);
+            strokeHex(map[i]);
+        
+            
+        }
         
     
 }
@@ -182,7 +203,7 @@ function clickHex(){
 }
 function update() {
        drawMap();
-       clickHex();
+       checkMap();
 
     }
 
@@ -196,7 +217,7 @@ window.addEventListener("load", function () {
         document.getElementById("drawarea").setAttribute("height", "600") 
      
         
-        setInterval(update, 1000 / 30);
+        setInterval(update, 1000 / fps);
 
     
 
