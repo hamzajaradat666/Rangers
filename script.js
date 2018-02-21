@@ -1,10 +1,14 @@
     var canvas = document.getElementById("drawarea");
     var ctx = canvas.getContext("2d");
     var ctx2 = canvas.getContext("2d");
-    
+
+
+    var passable = document.getElementById("pass");
+
     var fps = 30;
     var time = 0;
-    
+    var callOnce = false;
+
     var cellside = 20;
     var initPosX = 1;
     var initPosY = 1;
@@ -16,6 +20,7 @@
     var ix = cellside;
     var iy = r;
     var cellNum = 1;
+
     var hexagon = {
         
         x: cellside,
@@ -25,6 +30,17 @@
         side: cellside
 
     }
+     var enemy = {
+        
+         hp : 100,
+         
+
+    }
+     
+     var key = {
+         
+         a:65
+     }
     
     var map = [];
     
@@ -82,7 +98,10 @@ function theDrawMap(x, y, cir_R, in_r, side) {
                 cellNum: cellNum,
                 isSelected:false,
                 isGoto:false,
-                isPassable:false
+                isImpassable:false,
+                
+                
+                
 
             }
 
@@ -100,9 +119,9 @@ function drawMap(){
     
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
-    for (var i = initPosX; i < board_width + initPosX; i += 1) {
+    for (var j = initPosX; j < board_height + initPosX; j += 1) {
         
-            for (var j = initPosY; j < board_height + initPosY; j += 1) {
+            for (var i = initPosY; i < board_width + initPosY; i+= 1) {
                 
                 if (i % 2 != 0) {
                     ctx.save();
@@ -155,7 +174,26 @@ function strokeHex(hex){
     
 }
 
-
+function randomMap(){
+    
+    for(var i=0; i<map.length;i++){
+    
+         map[i].isImpassable = false;
+         
+     }
+    
+    
+    for(var i=0; i<map.length;i++){
+        
+         var random = Math.floor(Math.random() * 20 + 1);
+    
+        if(i < board_width*3)
+         map[i].isImpassable = true
+         
+     }
+    
+    
+}
 
 function checkMap(){
     
@@ -173,37 +211,37 @@ function checkMap(){
         fillHex(map[i]);  
     }
         
-    if(hexhover(map[i])==true && hexClick(map[i])==true && fps%3==0){
+    if(hexhover(map[i]) && hexClick(map[i])&& keys[key.a]==true){
         
-        if(!map[i].isSelected){
+        if(!map[i].isImpassable){
             console.log("Locked")
-            map[i].isSelected=true;
-       
-        }
+            map[i].isImpassable=true;
+       }
         
         else{
             console.log("Unlocked")
-            map[i].isSelected=false;
+            map[i].isImpassable=false;
        
         }
         
+    md=false}
+        
+    if(map[i].isImpassable==true){
+        
+        fillHex(map[i])
+        strokeHex(map[i])
     }
-        
-    if(map[i].isSelected){
-            
-            fillHex(map[i]);
-            strokeHex(map[i]);
-        
-            
-        }
         
     
 }
+    
+    
     
 }
 function update() {
        drawMap();
        checkMap();
+    
 
     }
 
@@ -213,11 +251,13 @@ window.addEventListener("load", function () {
      
      
         document.getElementById("testarea").innerHTML = "Welcome To Rangers";
-        document.getElementById("drawarea").setAttribute("width", "1200")
-        document.getElementById("drawarea").setAttribute("height", "600") 
+        document.getElementById("drawarea").setAttribute("width", "1200");
+        document.getElementById("drawarea").setAttribute("height", "600");
+        
      
         
         setInterval(update, 1000 / fps);
+    
 
     
 

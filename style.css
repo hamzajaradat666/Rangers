@@ -19,14 +19,14 @@ body:hover{
 
 canvas{
     
-    background-color: #716f8e;
+    background-color: #a29ed1;
     border: solid 10px darkred;
     border-radius: 10px;
     transition: 1.5s;
     
 }
 canvas:hover{
-    margin-left: 18%;
+    margin-left: 8%;
     background-color: white;
     transition: 1.5s;
     
