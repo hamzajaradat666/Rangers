@@ -5,10 +5,12 @@
 
     let passable = document.getElementById("pass");
 
+    
+    let map = [];
+
     let fps = 30;
     let time = 0;
     let callOnce = true;
-
     let cellside = 15;
     let initPosX;
     let initPosY;
@@ -17,11 +19,21 @@
     let closeX = 1.53;
     let closeY = 1.76;
     let r = cellside * Math.sqrt(3) / 2;
-    let ix = cellside;
-    let iy = r;
-    let cellNum = 1;
+    let count = 1;
+    
+    function props() {
+
+        map = [];
+        cellside = parseInt(document.getElementById("cellsize1").value);
+        board_width = Math.floor(parseInt(document.getElementById("borderwidth").value)/2)*2;
+        board_height = parseInt(document.getElementById("borderheight").value);
+        initPosX = Math.floor(parseInt(document.getElementById("initposX").value)/2)*2;
+        initPosY = Math.floor(parseInt(document.getElementById("initposY").value)/2)*2;
+        
 
 
+
+    }
 
     let hexagon = {
 
@@ -29,15 +41,75 @@
         y: cellside,
         cir_R: cellside,
         in_r: r,
-        side: cellside
+        side: cellside,
+        cellnum : count
 
     }
-    let enemy = {
 
-        hp: 100,
+  
+    class Hexagon {
+        
+        
 
+       constructor(hex){ 
+        this.cellside = hex.side;   
+        this.x=hex.x
+        this.y=hex.y
+        this.cir_R=hex.cir_R
+        this.in_r=hex.in_r
+        this.side=hex.side
+        this.cellnum = hex.cellnum;
+        this.isImpassable = false;
+       }
+       
+   
+           
+        set_hex (hex1){
+
+        this.x=hex1.x;
+        this.y=hex1.y;  
+        this.cellnum=hex1.cellnum;   
 
     }
+
+        default(cellside){
+
+        this.cellside = cellside;   
+        this.r = this.cellside * Math.sqrt(3) / 2;
+        this.x=this.cellside
+        this.y=this.cellside
+        this.cir_R=this.cellside
+        this.in_r=this.r
+        this.side=this.cellside
+        this.ix=this.cellside;
+        this.iy=this.r;
+       
+
+        }
+
+
+       
+    }
+     
+
+    class Unit extends Hexagon{
+
+        constructor(pieces=[]){
+        this.pieces = pieces;
+        this.isGoto = false;
+        this.isSelected = false;
+    }
+}
+    class Tanks extends Unit{
+
+        constructor(){
+
+           super(); 
+        }
+
+    }
+    
+    
 
     let key = {
 
@@ -45,118 +117,74 @@
         s: 83,
     }
 
-    let map = [];
-
-
-
-
-    function props() {
-
-        map = [];
-        cellNum = 1;
-        board_width = Math.floor(parseInt(document.getElementById("borderwidth").value)/2)*2;
-        board_height = parseInt(document.getElementById("borderheight").value);
-        initPosX = parseInt(document.getElementById("initposX").value);
-        initPosY = parseInt(document.getElementById("initposY").value);
-        cellside = parseInt(document.getElementById("cellsize1").value);
-
-
-
-    }
-
     function check_console_log() {
 
+        console.clear();
         console.log(map);
+        
 
     }
+    
+    
+    function drawMap() {
+        
+      
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let j = initPosX; j < board_height + initPosX; j += 1) {
+            for (let i = initPosY; i < board_width + initPosY; i += 1) {
+                    
+                    hexagon.x=hexagon.x*i*closeX;
+                    hexagon.y=i%2==0?hexagon.y * j * closeY + hexagon.in_r*2:hexagon.y * j * closeY + hexagon.in_r;
+                    hexagon.cellnum=count++;
+                    ctx.save();
+                    ctx.strokeStyle = "rgba(100, 100, 100, 1)";
+                    theDrawMap(new Hexagon(hexagon));
+                    ctx.restore(); 
+                    hexagon.x=15;
+                    hexagon.y=15; 
+                       
+               
+            }
+        }
+        
+    }
 
-    function theDrawMap(x, y, cir_R, in_r, side) {
 
+    function theDrawMap(hex1) {
+ 
         ctx.save();
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.moveTo(x - cir_R, y)
-        ctx.lineTo(x - side / 2, y - in_r)
-        ctx.lineTo(x + side / 2, y - in_r)
-        ctx.lineTo(x + cir_R, y);
-        ctx.lineTo(x + side / 2 , y + in_r)
-        ctx.lineTo(x - side / 2, y + in_r)
+        ctx.moveTo(hex1.x, hex1.y);
+        ctx.moveTo(hex1.x - hex1.cir_R, hex1.y)
+        ctx.lineTo(hex1.x - hex1.side / 2, hex1.y - hex1.in_r)
+        ctx.lineTo(hex1.x + hex1.side / 2, hex1.y - hex1.in_r)
+        ctx.lineTo(hex1.x + hex1.cir_R, hex1.y);
+        ctx.lineTo(hex1.x + hex1.side / 2 , hex1.y + hex1.in_r)
+        ctx.lineTo(hex1.x - hex1.side / 2, hex1.y + hex1.in_r)
         ctx.closePath();
         ctx.stroke();
         ctx.restore();
 
-        
-
-        let hex = {
-            dx: x,
-            dy: y,
-            R: cir_R,
-            r: in_r,
-            side: side,
-            cellNum: cellNum,
-            isSelected: false,
-            isGoto: false,
-            isImpassable: false,
-        }
-
         if (map.length < board_height * board_width) {
-            map.push(hex);
-            cellNum++;
+            map.push(hex1);  
         }
-    }
-
-
-    function drawMap() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let j = initPosX; j < board_height + initPosX; j += 1) {
-            for (let i = initPosY; i < board_width + initPosY; i += 1) {
-                if (i % 2 != 0) {
-                    ctx.save();
-                    ctx.strokeStyle = "rgba(200, 100, 100, 1)";
-                    theDrawMap(hexagon.x * i * closeX, hexagon.y * j * closeY + hexagon.in_r, hexagon.cir_R, hexagon.in_r, hexagon.side);
-                    ctx.restore();
-                }
-                if (i % 2 == 0) {
-                    ctx.save();
-                    ctx.strokeStyle = "rgba(100, 100, 200, 1)";
-                    theDrawMap(hexagon.x * i * closeX, hexagon.y * j * closeY + hexagon.in_r + iy, hexagon.cir_R, hexagon.in_r, hexagon.side);
-                    ctx.restore();
-                }
-            }
-        }
-
     }
 
     function fillHex(hex) {
         ctx.save();
         ctx.beginPath();
-        ctx.moveTo(hex.dx, hex.dy);
-        ctx.moveTo(hex.dx - hex.R, hex.dy)
-        ctx.lineTo(hex.dx - hex.side / 2, hex.dy - hex.r)
-        ctx.lineTo(hex.dx + hex.side / 2, hex.dy - hex.r)
-        ctx.lineTo(hex.dx + hex.R, hex.dy);
-        ctx.lineTo(hex.dx + hex.side / 2, hex.dy + r)
-        ctx.lineTo(hex.dx - hex.side / 2, hex.dy + hex.r)
+        ctx.moveTo(hex.x, hex.y);
+        ctx.moveTo(hex.x - hex.cir_R, hex.y)
+        ctx.lineTo(hex.x - hex.cellside / 2, hex.y - hex.in_r)
+        ctx.lineTo(hex.x + hex.cellside / 2, hex.y - hex.in_r)
+        ctx.lineTo(hex.x + hex.cir_R, hex.y);
+        ctx.lineTo(hex.x + hex.cellside / 2, hex.y + hex.in_r)
+        ctx.lineTo(hex.x - hex.cellside / 2, hex.y + hex.in_r)
         ctx.closePath();
-        ctx.fillStyle = "rgba(0,100,0,0.54)"
+        ctx.fillStyle = "rgba(50,100,200,0.64)"
         ctx.fill();
         ctx.restore();
-    }
-
-    function strokeHex(hex) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(hex.dx, hex.dy);
-        ctx.moveTo(hex.dx - hex.R, hex.dy)
-        ctx.lineTo(hex.dx - hex.side / 2, hex.dy - hex.r)
-        ctx.lineTo(hex.dx + hex.side / 2, hex.dy - hex.r)
-        ctx.lineTo(hex.dx + hex.R, hex.dy);
-        ctx.lineTo(hex.dx + hex.side / 2, hex.dy + r)
-        ctx.lineTo(hex.dx - hex.side / 2, hex.dy + hex.r)
-        ctx.closePath();
-        ctx.stroke();
-        ctx.restore();
-
+        
     }
 
     function randomMap() {
@@ -165,13 +193,19 @@
         }
 
         for (let i = 0; i < map.length; i++) {
-            let random = Math.floor(Math.random() * 20 + 1);
-            if (i < board_width * 3)
+            let random = Math.floor(Math.random() * map.length + 1);
+            if (i < board_width * 3){
                 map[i].isImpassable = true
+                fillHex(map[random])
+            }
+                
         }
+       
 
     function checkMap() {
         for (let i = 0; i < map.length; i++) {
+            if(map[i].isImpassable==true)
+                fillHex(map[i]);
             if (hexhover(map[i])) {
                 fillHex(map[i]);
                 if (hexClick(map[i]) && keys[key.a] == true) {
@@ -186,93 +220,92 @@
                 }
                 
             }
-            if (map[i].isImpassable == true) {
-                fillHex(map[i])
-                /*strokeHex(map[i])*/
-            }
+            
 
         }
 
     }
-    function placeTank() {
-        for (let i = 0; i < map.length; i++) {
-            if (hexhover(map[i]) && keys[key.s]) {
-                if (map[i].cellNum % 2 !== 0) {
-                    fillHex(map[i]);
-                    fillHex(map[i + board_width]);
-                    fillHex(map[i - board_width]);
-                    fillHex(map[i + board_width - 1]);
-                    fillHex(map[i + board_width + 1]);
-                    fillHex(map[i + 1]);
-                    fillHex(map[i - 1]);
+    // function placeTank() {
+    //     for (let i = 0; i < map.length; i++) {
+    //         if (hexhover(map[i]) && keys[key.s]) {
+    //             if (map[i].cellNum % 2 !== 0) {
+    //                 fillHex(map[i]);
+    //                 fillHex(map[i + board_width]);
+    //                 fillHex(map[i - board_width]);
+    //                 fillHex(map[i + board_width - 1]);
+    //                 fillHex(map[i + board_width + 1]);
+    //                 fillHex(map[i + 1]);
+    //                 fillHex(map[i - 1]);
                     
-                }
-                if (map[i].cellNum % 2 == 0) {
-                    fillHex(map[i]);
-                    fillHex(map[i + board_width]);
-                    fillHex(map[i - board_width]);
-                    fillHex(map[i - board_width - 1]);
-                    fillHex(map[i - board_width + 1]);
-                    fillHex(map[i + 1]);
-                    fillHex(map[i - 1]);
+    //             }
+    //             if (map[i].cellNum % 2 == 0) {
+    //                 fillHex(map[i]);
+    //                 fillHex(map[i + board_width]);
+    //                 fillHex(map[i - board_width]);
+    //                 fillHex(map[i + board_width*2 - 1]);
+    //                 fillHex(map[i + board_width + 1]);
+    //                 fillHex(map[i + 1]);
+    //                 fillHex(map[i - 1]);
                    
-                }
-                if (hexClick(map[i]) && keys[key.s] == true) {
-                    if (map[i].cellNum % 2 == 0){
-                        if (!map[i].isImpassable) {
-                            console.log("Tank Placed")
-                            map[i].isImpassable = true;
-                            map[i + board_width].isImpassable = true;
-                            map[i - board_width].isImpassable = true;
-                            map[i - board_width + 1].isImpassable = true;
-                            map[i - board_width - 1].isImpassable = true;
-                            map[i + 1].isImpassable = true;
-                            map[i - 1].isImpassable = true;
-                        }
-                        else {
-                            console.log("Tank Removed")
-                            map[i].isImpassable = false;
-                            map[i + board_width].isImpassable = false;
-                            map[i - board_width].isImpassable = false;
-                            map[i - board_width + 1].isImpassable = false;
-                            map[i - board_width - 1].isImpassable = false;
-                            map[i + 1].isImpassable = false;
-                            map[i - 1].isImpassable = false;
+    //             }
+
+
+    //             if (hexClick(map[i])) {
+    //                 if (map[i].cellNum % 2 == 0){
+    //                     if (!map[i].isImpassable) {
+    //                         console.log("Tank Placed")
+    //                         map[i].isImpassable = true;
+    //                         map[i + board_width].isImpassable = true;
+    //                         map[i - board_width].isImpassable = true;
+    //                         map[i - board_width + 1].isImpassable = true;
+    //                         map[i - board_width - 1].isImpassable = true;
+    //                         map[i + 1].isImpassable = true;
+    //                         map[i - 1].isImpassable = true;
+    //                     }
+    //                     else {
+    //                         console.log("Tank Removed")
+    //                         map[i].isImpassable = false;
+    //                         map[i + board_width].isImpassable = false;
+    //                         map[i - board_width].isImpassable = false;
+    //                         map[i - board_width + 1].isImpassable = false;
+    //                         map[i - board_width - 1].isImpassable = false;
+    //                         map[i + 1].isImpassable = false;
+    //                         map[i - 1].isImpassable = false;
     
-                        }}
+    //                     }}
 
 
-                    if (map[i].cellNum % 2 != 0){
-                        if (!map[i].isImpassable) {
-                            console.log("Tank Placed")
-                            map[i].isImpassable = true;
-                            map[i + board_width].isImpassable = true;
-                            map[i - board_width].isImpassable = true;
-                            map[i + board_width + 1].isImpassable = true;
-                            map[i + board_width - 1].isImpassable = true;
-                            map[i + 1].isImpassable = true;
-                            map[i - 1].isImpassable = true;
-                            console.log("hi")
-                        }
-                        else {
-                            console.log("Tank Removed")
-                            map[i].isImpassable = false;
-                            map[i + board_width].isImpassable = false;
-                            map[i - board_width].isImpassable = false;
-                            map[i + board_width + 1].isImpassable = false;
-                            map[i + board_width - 1].isImpassable = false;
-                            map[i + 1].isImpassable = false;
-                            map[i - 1].isImpassable = false;
+    //                 if (map[i].cellNum % 2 != 0){
+    //                     if (!map[i].isImpassable) {
+    //                         console.log("Tank Placed")
+    //                         map[i].isImpassable = true;
+    //                         map[i + board_width].isImpassable = true;
+    //                         map[i - board_width].isImpassable = true;
+    //                         map[i + board_width + 1].isImpassable = true;
+    //                         map[i + board_width - 1].isImpassable = true;
+    //                         map[i + 1].isImpassable = true;
+    //                         map[i - 1].isImpassable = true;
+    //                         console.log("hi")
+    //                     }
+    //                     else {
+    //                         console.log("Tank Removed")
+    //                         map[i].isImpassable = false;
+    //                         map[i + board_width].isImpassable = false;
+    //                         map[i - board_width].isImpassable = false;
+    //                         map[i + board_width + 1].isImpassable = false;
+    //                         map[i + board_width - 1].isImpassable = false;
+    //                         map[i + 1].isImpassable = false;
+    //                         map[i - 1].isImpassable = false;
     
-                        }}
-                    md = false
-                }
+    //                     }}
+    //                 md = false
+    //             }
 
-            }
+    //         }
 
-        }
+    //     }
 
-    }
+    // }
 
     function timer() {
         fps++;
@@ -289,6 +322,8 @@
         cb();
     }
 
+    
+   
     function update() {
         timer();
         if(callOnce){props(); callOnce=false}

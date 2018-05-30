@@ -66,11 +66,11 @@ function circleCollision(circle1,circle2){
 //----------------------------------------------------------------------------------------
 function hexhover(hex){
     
-    var dx = hex.dx - mx;
-    var dy = hex.dy - my;
+    var dx = hex.x - mx;
+    var dy = hex.y - my;
     var distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance < hex.r) {
+    if (distance < hex.in_r) {
         return true;
     }
     

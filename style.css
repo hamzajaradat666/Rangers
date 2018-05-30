@@ -19,7 +19,7 @@ body:hover{
 
 canvas{
     
-    background-color: white;
+    background-color: rgb(58, 58, 58);
     border: solid 10px darkred;
     border-radius: 10px;
     transition: 1.5s;
