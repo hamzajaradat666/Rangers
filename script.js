@@ -3,6 +3,11 @@
     let ctx2 = canvas.getContext("2d");
 
 
+
+    let placeTankFlag = document.getElementById("tank");
+    let placeSoilderFlag = document.getElementById("soilder");
+
+
     let passable = document.getElementById("pass");
 
     
@@ -181,7 +186,7 @@
         ctx.lineTo(hex.x + hex.cellside / 2, hex.y + hex.in_r)
         ctx.lineTo(hex.x - hex.cellside / 2, hex.y + hex.in_r)
         ctx.closePath();
-        ctx.fillStyle = "rgba(50,100,200,0.64)"
+        // ctx.fillStyle = "rgba(50,100,200,0.64)"
         ctx.fill();
         ctx.restore();
         
@@ -207,108 +212,118 @@
             if(map[i].isImpassable==true)
                 fillHex(map[i]);
             if (hexhover(map[i])) {
-                fillHex(map[i]);
-                if (hexClick(map[i]) && keys[key.a] == true) {
-                    if (!map[i].isImpassable) {
-                        console.log("Locked")
-                        map[i].isImpassable = true;
-                    } else {
-                        console.log("Unlocked")
-                        map[i].isImpassable = false;
-                    }
-                    md = false
-                }
-                
+                fillHex(map[i]);   
             }
             
 
         }
 
     }
-    // function placeTank() {
-    //     for (let i = 0; i < map.length; i++) {
-    //         if (hexhover(map[i]) && keys[key.s]) {
-    //             if (map[i].cellNum % 2 !== 0) {
-    //                 fillHex(map[i]);
-    //                 fillHex(map[i + board_width]);
-    //                 fillHex(map[i - board_width]);
-    //                 fillHex(map[i + board_width - 1]);
-    //                 fillHex(map[i + board_width + 1]);
-    //                 fillHex(map[i + 1]);
-    //                 fillHex(map[i - 1]);
+
+    function place_unit(){
+
+        placeSoilder();
+        placeTank();
+
+    }
+
+    function placeSoilder(){
+
+        if (hexClick(map[i]) && placeSoilderFlag.checked) {
+            if (!map[i].isImpassable) {
+                console.log("Locked")
+                map[i].isImpassable = true;
+            } else {
+                console.log("Unlocked")
+                map[i].isImpassable = false;
+            }
+            md = false
+        }
+    }
+    function placeTank() {
+        for (let i = 0; i < map.length; i++) {
+            if (hexhover(map[i]) && placeTankFlag.checked) {
+                if (map[i].cellnum % 2 !== 0) {
+                    fillHex(map[i]);
+                    fillHex(map[i + board_width]);
+                    fillHex(map[i - board_width]);
+                    fillHex(map[i + board_width - 1]);
+                    fillHex(map[i + board_width + 1]);
+                    fillHex(map[i + 1]);
+                    fillHex(map[i - 1]);
                     
-    //             }
-    //             if (map[i].cellNum % 2 == 0) {
-    //                 fillHex(map[i]);
-    //                 fillHex(map[i + board_width]);
-    //                 fillHex(map[i - board_width]);
-    //                 fillHex(map[i + board_width*2 - 1]);
-    //                 fillHex(map[i + board_width + 1]);
-    //                 fillHex(map[i + 1]);
-    //                 fillHex(map[i - 1]);
+                }
+                if (map[i].cellnum % 2 == 0) {
+                    fillHex(map[i]);
+                    fillHex(map[i + board_width]);
+                    fillHex(map[i - board_width]);
+                    fillHex(map[i - board_width - 1]);
+                    fillHex(map[i - board_width + 1]);
+                    fillHex(map[i + 1]);
+                    fillHex(map[i - 1]);
                    
-    //             }
+                }
 
 
-    //             if (hexClick(map[i])) {
-    //                 if (map[i].cellNum % 2 == 0){
-    //                     if (!map[i].isImpassable) {
-    //                         console.log("Tank Placed")
-    //                         map[i].isImpassable = true;
-    //                         map[i + board_width].isImpassable = true;
-    //                         map[i - board_width].isImpassable = true;
-    //                         map[i - board_width + 1].isImpassable = true;
-    //                         map[i - board_width - 1].isImpassable = true;
-    //                         map[i + 1].isImpassable = true;
-    //                         map[i - 1].isImpassable = true;
-    //                     }
-    //                     else {
-    //                         console.log("Tank Removed")
-    //                         map[i].isImpassable = false;
-    //                         map[i + board_width].isImpassable = false;
-    //                         map[i - board_width].isImpassable = false;
-    //                         map[i - board_width + 1].isImpassable = false;
-    //                         map[i - board_width - 1].isImpassable = false;
-    //                         map[i + 1].isImpassable = false;
-    //                         map[i - 1].isImpassable = false;
+                if (hexClick(map[i])) {
+                    if (map[i].cellnum % 2 == 0){
+                        if (!map[i].isImpassable) {
+                            console.log("Tank Placed")
+                            map[i].isImpassable = true;
+                            map[i + board_width].isImpassable = true;
+                            map[i - board_width].isImpassable = true;
+                            map[i - board_width + 1].isImpassable = true;
+                            map[i - board_width - 1].isImpassable = true;
+                            map[i + 1].isImpassable = true;
+                            map[i - 1].isImpassable = true;
+                        }
+                        else {
+                            console.log("Tank Removed")
+                            map[i].isImpassable = false;
+                            map[i + board_width].isImpassable = false;
+                            map[i - board_width].isImpassable = false;
+                            map[i - board_width + 1].isImpassable = false;
+                            map[i - board_width - 1].isImpassable = false;
+                            map[i + 1].isImpassable = false;
+                            map[i - 1].isImpassable = false;
     
-    //                     }}
+                        }}
 
 
-    //                 if (map[i].cellNum % 2 != 0){
-    //                     if (!map[i].isImpassable) {
-    //                         console.log("Tank Placed")
-    //                         map[i].isImpassable = true;
-    //                         map[i + board_width].isImpassable = true;
-    //                         map[i - board_width].isImpassable = true;
-    //                         map[i + board_width + 1].isImpassable = true;
-    //                         map[i + board_width - 1].isImpassable = true;
-    //                         map[i + 1].isImpassable = true;
-    //                         map[i - 1].isImpassable = true;
-    //                         console.log("hi")
-    //                     }
-    //                     else {
-    //                         console.log("Tank Removed")
-    //                         map[i].isImpassable = false;
-    //                         map[i + board_width].isImpassable = false;
-    //                         map[i - board_width].isImpassable = false;
-    //                         map[i + board_width + 1].isImpassable = false;
-    //                         map[i + board_width - 1].isImpassable = false;
-    //                         map[i + 1].isImpassable = false;
-    //                         map[i - 1].isImpassable = false;
+                    if (map[i].cellnum % 2 != 0){
+                        if (!map[i].isImpassable) {
+                            console.log("Tank Placed")
+                            map[i].isImpassable = true;
+                            map[i + board_width].isImpassable = true;
+                            map[i - board_width].isImpassable = true;
+                            map[i + board_width + 1].isImpassable = true;
+                            map[i + board_width - 1].isImpassable = true;
+                            map[i + 1].isImpassable = true;
+                            map[i - 1].isImpassable = true;
+                            console.log("hi")
+                        }
+                        else {
+                            console.log("Tank Removed")
+                            map[i].isImpassable = false;
+                            map[i + board_width].isImpassable = false;
+                            map[i - board_width].isImpassable = false;
+                            map[i + board_width + 1].isImpassable = false;
+                            map[i + board_width - 1].isImpassable = false;
+                            map[i + 1].isImpassable = false;
+                            map[i - 1].isImpassable = false;
     
-    //                     }}
-    //                 md = false
-    //             }
+                        }}
+                    md = false
+                }
 
-    //         }
+            }
 
-    //     }
+        }
 
-    // }
+    }
 
     function timer() {
-        fps++;
+        fps++
         if (fps > 30) {
             time++;
             fps = 0;
@@ -329,7 +344,7 @@
         if(callOnce){props(); callOnce=false}
         template("Drawing Map", drawMap()) 
         checkMap();
-        placeTank();
+        place_unit();
 
 
     }
