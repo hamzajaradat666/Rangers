@@ -3,20 +3,14 @@
     let ctx2 = canvas.getContext("2d");
 
 
-
     let placeTankFlag = document.getElementById("tank");
     let placeSoilderFlag = document.getElementById("soilder");
-
-
     let passable = document.getElementById("pass");
-
-    
     let map = [];
-
     let fps = 30;
     let time = 0;
     let callOnce = true;
-    let cellside = 15;
+    cellside=15;
     let initPosX;
     let initPosY;
     let board_width;
@@ -47,7 +41,8 @@
         cir_R: cellside,
         in_r: r,
         side: cellside,
-        cellnum : count
+        cellnum : count,
+        isImpassable:false
 
     }
 
@@ -98,8 +93,9 @@
      
 
     class Unit extends Hexagon{
-
+        
         constructor(pieces=[]){
+            super();
         this.pieces = pieces;
         this.isGoto = false;
         this.isSelected = false;
@@ -133,7 +129,7 @@
     
     function drawMap() {
         
-      
+        let cellside = 15;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let j = initPosX; j < board_height + initPosX; j += 1) {
             for (let i = initPosY; i < board_width + initPosY; i += 1) {
@@ -143,10 +139,10 @@
                     hexagon.cellnum=count++;
                     ctx.save();
                     ctx.strokeStyle = "rgba(100, 100, 100, 1)";
-                    theDrawMap(new Hexagon(hexagon));
+                    theDrawMap(new Unit(hexagon));
                     ctx.restore(); 
-                    hexagon.x=15;
-                    hexagon.y=15; 
+                    hexagon.x=cellside;
+                    hexagon.y=cellside; 
                        
                
             }
@@ -186,7 +182,8 @@
         ctx.lineTo(hex.x + hex.cellside / 2, hex.y + hex.in_r)
         ctx.lineTo(hex.x - hex.cellside / 2, hex.y + hex.in_r)
         ctx.closePath();
-        // ctx.fillStyle = "rgba(50,100,200,0.64)"
+        // ctx.fillStyle = "rgba("+(Math.random()*1+1)+","+(Math.random()*1+1)+","+(Math.random()*255+1)+",0.64)";
+        ctx.fillStyle = "rgba(223,123,1,0.6)"
         ctx.fill();
         ctx.restore();
         
@@ -194,123 +191,127 @@
 
     function randomMap() {
         for (let i = 0; i < map.length; i++) 
-            map[i].isImpassable = false;
+            unit.isImpassable = false;
         }
 
         for (let i = 0; i < map.length; i++) {
             let random = Math.floor(Math.random() * map.length + 1);
             if (i < board_width * 3){
-                map[i].isImpassable = true
+                unit.isImpassable = true
                 fillHex(map[random])
             }
                 
         }
        
 
-    function checkMap() {
-        for (let i = 0; i < map.length; i++) {
-            if(map[i].isImpassable==true)
-                fillHex(map[i]);
-            if (hexhover(map[i])) {
-                fillHex(map[i]);   
-            }
+    function checkMap(unit) {
+        
+            
             
 
         }
 
-    }
+    
 
     function place_unit(){
-
-        placeSoilder();
-        placeTank();
+    
+       for(let i=0;map.length;i++){
+        // checkMap(map[i]); 
+        placeSoilder(map[i]);
+        placeTank(map[i]);
+    }
 
     }
 
-    function placeSoilder(){
+    function placeSoilder(unit){
 
-        if (hexClick(map[i]) && placeSoilderFlag.checked) {
-            if (!map[i].isImpassable) {
+        if (hexhover(unit) && placeSoilderFlag.checked) {
+
+            if (hexClick(unit)){
+                if(!unit.isImpassable){
                 console.log("Locked")
-                map[i].isImpassable = true;
-            } else {
+                unit.isImpassable = true;
+                }
+             else {
                 console.log("Unlocked")
-                map[i].isImpassable = false;
+                unit.isImpassable = false;
             }
             md = false
         }
+            
+        }
     }
-    function placeTank() {
-        for (let i = 0; i < map.length; i++) {
-            if (hexhover(map[i]) && placeTankFlag.checked) {
-                if (map[i].cellnum % 2 !== 0) {
-                    fillHex(map[i]);
-                    fillHex(map[i + board_width]);
-                    fillHex(map[i - board_width]);
-                    fillHex(map[i + board_width - 1]);
-                    fillHex(map[i + board_width + 1]);
-                    fillHex(map[i + 1]);
-                    fillHex(map[i - 1]);
+    function placeTank(unit) {
+        
+            if (hexhover(unit) && placeTankFlag.checked) {
+                if (unit.cellnum % 2 !== 0) {
+                    fillHex(unit);
+                    // fillHex(unit.cellnum + board_width]);
+                    // fillHex(unit.cellnum - board_width]);
+                    // fillHex(unit.cellnum + board_width - 1]);
+                    // fillHex(unit.cellnum + board_width + 1]);
+                    // fillHex(unit.cellnum + 1]);
+                    // fillHex(map[i - 1]);
                     
                 }
-                if (map[i].cellnum % 2 == 0) {
-                    fillHex(map[i]);
-                    fillHex(map[i + board_width]);
-                    fillHex(map[i - board_width]);
-                    fillHex(map[i - board_width - 1]);
-                    fillHex(map[i - board_width + 1]);
-                    fillHex(map[i + 1]);
-                    fillHex(map[i - 1]);
+                if (unit.cellnum % 2 == 0) {
+                    fillHex(unit);
+                    // fillHex(map[i + board_width]);
+                    // fillHex(map[i - board_width]);
+                    // fillHex(map[i - board_width - 1]);
+                    // fillHex(map[i - board_width + 1]);
+                    // fillHex(map[i + 1]);
+                    // fillHex(map[i - 1]);
                    
                 }
 
 
-                if (hexClick(map[i])) {
-                    if (map[i].cellnum % 2 == 0){
-                        if (!map[i].isImpassable) {
+                if (hexClick(unit)) {
+                    if (unit.cellnum % 2 == 0){
+                        if (!unit.isImpassable) {
                             console.log("Tank Placed")
-                            map[i].isImpassable = true;
-                            map[i + board_width].isImpassable = true;
-                            map[i - board_width].isImpassable = true;
-                            map[i - board_width + 1].isImpassable = true;
-                            map[i - board_width - 1].isImpassable = true;
-                            map[i + 1].isImpassable = true;
-                            map[i - 1].isImpassable = true;
+                            unit.isImpassable = true;
+                            // map[i + board_width].isImpassable = true;
+                            // map[i - board_width].isImpassable = true;
+                            // map[i - board_width + 1].isImpassable = true;
+                            // map[i - board_width - 1].isImpassable = true;
+                            // map[i + 1].isImpassable = true;
+                            // map[i - 1].isImpassable = true;
                         }
                         else {
                             console.log("Tank Removed")
-                            map[i].isImpassable = false;
-                            map[i + board_width].isImpassable = false;
-                            map[i - board_width].isImpassable = false;
-                            map[i - board_width + 1].isImpassable = false;
-                            map[i - board_width - 1].isImpassable = false;
-                            map[i + 1].isImpassable = false;
-                            map[i - 1].isImpassable = false;
+                            unit.isImpassable = false;
+                            // map[i + board_width].isImpassable = false;
+                            // map[i - board_width].isImpassable = false;
+                            // map[i - board_width + 1].isImpassable = false;
+                            // map[i - board_width - 1].isImpassable = false;
+                            // map[i + 1].isImpassable = false;
+                            // map[i - 1].isImpassable = false;
     
                         }}
 
 
-                    if (map[i].cellnum % 2 != 0){
-                        if (!map[i].isImpassable) {
+                    if (unit.cellnum % 2 != 0){
+                        if (!unit.isImpassable) {
                             console.log("Tank Placed")
-                            map[i].isImpassable = true;
-                            map[i + board_width].isImpassable = true;
-                            map[i - board_width].isImpassable = true;
-                            map[i + board_width + 1].isImpassable = true;
-                            map[i + board_width - 1].isImpassable = true;
-                            map[i + 1].isImpassable = true;
-                            map[i - 1].isImpassable = true;
+                            unit.isImpassable = true;
+                            // map[i + board_width].isImpassable = true;
+                            // map[i - board_width].isImpassable = true;
+                            // map[i + board_width + 1].isImpassable = true;
+                            // map[i + board_width - 1].isImpassable = true;
+                            // map[i + 1].isImpassable = true;
+                            // map[i - 1].isImpassable = true;
                             console.log("hi")
                         }
                         else {
                             console.log("Tank Removed")
-                            map[i].isImpassable = false;
-                            map[i + board_width].isImpassable = false;
-                            map[i - board_width].isImpassable = false;
-                            map[i + board_width + 1].isImpassable = false;
-                            map[i + board_width - 1].isImpassable = false;
-                            map[i + 1].isImpassable = false;
-                            map[i - 1].isImpassable = false;
+                            unit.isImpassable = false;
+                            // map[i + board_width].isImpassable = false;
+                            // map[i - board_width].isImpassable = false;
+                            // map[i + board_width + 1].isImpassable = false;
+                            // map[i + board_width - 1].isImpassable = false;
+                            // map[i + 1].isImpassable = false;
+                            // map[i - 1].isImpassable = false;
     
                         }}
                     md = false
@@ -320,7 +321,7 @@
 
         }
 
-    }
+
 
     function timer() {
         fps++
@@ -330,7 +331,7 @@
         }
         if (time > 3600)
             time = 0;
-
+            
     }
 
     function template(_let,cb=function(){}){
@@ -340,10 +341,10 @@
     
    
     function update() {
+        
         timer();
         if(callOnce){props(); callOnce=false}
         template("Drawing Map", drawMap()) 
-        checkMap();
         place_unit();
 
 
