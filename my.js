@@ -30,3 +30,8 @@
 
 
 // }
+
+
+/* function template(_let, cb = function () {}) {
+    cb();
+} */

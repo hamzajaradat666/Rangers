@@ -68,9 +68,11 @@ function hexhover(hex){
    
     var dx = hex.x - mx;
     var dy = hex.y - my;
+    
     var distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance < hex.in_r) {
+        console.log(mx,my)
         return true;
     }
     
@@ -78,8 +80,10 @@ function hexhover(hex){
 
 function hexClick(hex){
     
-   if(md==true)
+   if(md==true){
        return true;
+    console.log("ABC")
+   }
     
     else return false
     
