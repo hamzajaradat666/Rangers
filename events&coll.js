@@ -65,7 +65,7 @@ function circleCollision(circle1,circle2){
 
 //----------------------------------------------------------------------------------------
 function hexhover(hex){
-    
+   
     var dx = hex.x - mx;
     var dy = hex.y - my;
     var distance = Math.sqrt(dx * dx + dy * dy);
