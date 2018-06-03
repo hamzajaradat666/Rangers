@@ -11,7 +11,12 @@
 <body>
 
     <div class="testarea" id="testarea">Hello</div>
+    <div style="display: inline-flex">
+    <button id="backB" onclick="back()">&leftharpoonup;</button>
     <canvas id="drawarea" width="1280" height="900"></canvas>
+    <button id="forthB"onclick="back()">&leftharpoonup;</button>
+    </div>
+
 
 <div class="props">
     <div class="props">
@@ -34,9 +39,12 @@
         <label>Place Soilder<input id="soilder" name="type" type="radio"></label><br><br>
         
     
-        <button class="gui-button" onclick="_map.props()">Apply Settings</button><br><br>
+        <button class="gui-button" onclick="map0.props()">Apply Settings</button><br><br>
         
-        <button class="gui-button" onclick="check_console_log()">Check Console</button><br><br>
+        <button class="gui-button" onclick="map0.check_console_log()">Check Console</button><br><br>
+
+        <button class="gui-button" onclick="move_can()">move can</button><br><br>
+
     </div>
 
     </div>

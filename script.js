@@ -2,7 +2,11 @@ let canvas = document.getElementById("drawarea");
 let ctx = canvas.getContext("2d");
 let ctx2 = canvas.getContext("2d");
 
+let key = {
 
+    a: 65,
+    s: 83,
+}
 
 
 let placeTankFlag = document.getElementById("tank");
@@ -18,12 +22,12 @@ cellside = parseInt(document.getElementById("cellsize1").value);
 let r = cellside * Math.sqrt(3) / 2;
 let initPosX = 1;
 let initPosY = 1;
-let board_width = 5;
-let board_height = 5;
+let board_width=1;
+let board_height=1;
 let closeX = 1.53;
 let closeY = 1.76;
 let the_map = [];
-let count = 1;
+
 
 class Mapper {
 
@@ -46,8 +50,8 @@ class Mapper {
             cir_R: this.cellside,
             in_r: this.r,
             side: this.cellside,
-            cellnum: count,
-            isOff: false
+            cellnum: 1,
+            isOn: false
 
         }
 
@@ -65,93 +69,88 @@ class Mapper {
 
 
 
-    update() {
+    make() {
 
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let map = [];
-        count = 1;
 
         for (let j = this.initPosX; j < this.height + this.initPosX; j += 1) {
             for (let i = this.initPosY; i < this.width + this.initPosY; i += 1) {
                 this.hex.x = this.hex.x * i * this.cX;
                 this.hex.y = i % 2 == 0 ? this.hex.y * j * this.cY + this.hex.in_r * 2 : this.hex.y * j * this.cY + this.hex.in_r;
-
-                ctx.save();
-                ctx.strokeStyle = "rgba(200, 10, 100, 1)";
-                ctx.beginPath();
-                ctx.moveTo(this.hex.x, this.hex.y);
-                ctx.moveTo(this.hex.x - this.hex.cir_R, this.hex.y)
-                ctx.lineTo(this.hex.x - this.hex.side / 2, this.hex.y - this.hex.in_r)
-                ctx.lineTo(this.hex.x + this.hex.side / 2, this.hex.y - this.hex.in_r)
-                ctx.lineTo(this.hex.x + this.hex.cir_R, this.hex.y);
-                ctx.lineTo(this.hex.x + this.hex.side / 2, this.hex.y + this.hex.in_r)
-                ctx.lineTo(this.hex.x - this.hex.side / 2, this.hex.y + this.hex.in_r)
-                ctx.closePath();
-                ctx.stroke();
-                ctx.restore();
-
-
-
                 if (map.length <= this.height * this.width) {
+                    
+                    if (map.length <= this.width * this.height - 1)
+                        map.push({ ...this.hex});
 
-                    //   console.log(this.hex)
-                    map.push({ ...this.hex
-                    });
+                        console.log(this.hex)
 
                 }
 
-
+                
 
                 this.hex.x = this.cellside;
                 this.hex.y = this.cellside;
-                this.hex.cellnum = count++;
+                this.hex.cellnum++;
             }
         }
-        
+
+        this.hex.cellnum = 1;
         return map;
     }
 
-
-    unitchecker(unit, map) {
-
-        for (let j = 0; j <= unit.pieces.length; j++) {
-            for (let i = 0; i < map.length; i++) {
-                
-                if (unit.pieces[j] == map[i].cellnum) {
-
-                    unit.basePiece = map.cellnum;
-                    console.log("HAHAHAHAHAH"+`Unit Number${unit.hex.in_r}`)
-                    if(hexhover(unit.hex))
-                    fillHex(unit.hex);
-                    placeUnit(unit.hex);
-                }
-
-                if (hexClick(unit.hex)) {
-                    if (unit.cellnum % 2 == 0) {
-                        if (!unit.isPassable) {
-                            console.log("Tank Placed")
-                            unit.isPassable = true;
-
-                        } else {
-                            console.log("Tank Removed")
-                            unit.isPassable = false;
-
-                        }
-                    }
-
-                }
-            }
-            md = false
+    mapDrawer(mapC){
+        for (let i = 0; i < mapC.length; i++) {
+                    ctx.save();
+                    ctx.strokeStyle = "rgba(200, 10, 100, 1)";
+                    ctx.beginPath();
+                    ctx.moveTo(mapC[i].x, mapC[i].y);
+                    ctx.moveTo(mapC[i].x - mapC[i].cir_R, mapC[i].y)
+                    ctx.lineTo(mapC[i].x - mapC[i].side / 2, mapC[i].y - mapC[i].in_r)
+                    ctx.lineTo(mapC[i].x + mapC[i].side / 2, mapC[i].y - mapC[i].in_r)
+                    ctx.lineTo(mapC[i].x + mapC[i].cir_R, mapC[i].y);
+                    ctx.lineTo(mapC[i].x + mapC[i].side / 2, mapC[i].y + mapC[i].in_r)
+                    ctx.lineTo(mapC[i].x - mapC[i].side / 2, mapC[i].y + mapC[i].in_r)
+                    ctx.fillText(mapC[i].cellnum, mapC[i].x, mapC[i].y);
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.restore();
         }
 
+
+    }
+
+    mapChecker(mapC) {
+
+        
+
+            for (let i = 0; i < mapC.length; i++) {
+
+                
+
+                if(hexhover(mapC[i])&&hexClick(mapC[i])){
+                    
+                    mapC[i].isOn=true;
+                    fillHex(mapC[i])
+                    // md=false;
+                    
+                }
+
+                if(mapC[i].isOn==true){
+
+                    fillHex(mapC[i]);
+                }
+                
+          }
+          
     }
 
 
 
     props() {
 
-        this.map = [];
+        
         this.cellside = cellside;
         this.width = Math.floor(parseInt(document.getElementById("borderwidth").value) / 2) * 2;
         this.height = parseInt(document.getElementById("borderheight").value);
@@ -167,36 +166,45 @@ class Mapper {
 
 class Unit extends Mapper {
 
-    constructor() {
+    constructor(unit) {
         super();
+        console.log(" Unit Constructer");
         this.range = 20;
-        this.pieces = [1, 2, 5, 7];
-        this.basePiece = 0;  
+        this.pieces = [1];
+        this.basePiece = 99;
         this.attack = 20;
-        this.defence= 0;
-        this.hp= 0;
+        this.defence = 0;
+        this.hp = 0;
         this.isSelected = false;
-        this.moveable =false;
-        this.isPassable=false;
-    }
+        this.moveable = false;
+        this.isPassable = false;
 
+        if(unit instanceof Soilder)this.pieces=piecesMaker("Soilder");
+        if(unit instanceof Tank)this.pieces=piecesMaker("Tank");
+    
+
+    }
+      piecesMaker(checkthis){
+
+        if(checkthis==="Soilder"){
+            console.log("SOLIDER IS HERE")        
+        }
+        if(checkthis==="Tank"){console.log("TANK IS HERE")}
+
+      }
+    
 
 
 }
 
 class Soilder extends Unit {
 
-    constructor() {
-
-        super();
+    constructor(unit) {
+    
+        super(unit);
 
     }
 
-    // placeSoilder(bp) {
-
-    //     this.basePiece = bp
-
-    // }
 
 
 }
@@ -209,62 +217,38 @@ class Tank extends Unit {
 
 
     }
-
-
-    makeTank(tile) {
-
-
-        /*  this.basePiece = tile.cellnum;
-         this.pieces.push(
-             this.basePiece,
-             tile.cellnum + 1,
-             tile.cellnum - 1,
-             tile.cellnum + board_width,
-             tile.cellnum - board_width,
-             tile.cellnum - board_width + 1,
-             tile.cellnum - board_width - 1, ); */
-
-
-
-    }
-
 }
 
 
-let key = {
 
-    a: 65,
-    s: 83,
-}
+function fillHex(hex){
+                    ctx.save();
+                    ctx.strokeStyle = "rgba(200, 10, 100, 1)";
+                    ctx.beginPath();
+                    ctx.moveTo(hex.x, hex.y);
+                    ctx.moveTo(hex.x - hex.cir_R, hex.y)
+                    ctx.lineTo(hex.x - hex.side / 2, hex.y - hex.in_r)
+                    ctx.lineTo(hex.x + hex.side / 2, hex.y - hex.in_r)
+                    ctx.lineTo(hex.x + hex.cir_R, hex.y);
+                    ctx.lineTo(hex.x + hex.side / 2, hex.y + hex.in_r)
+                    ctx.lineTo(hex.x - hex.side / 2, hex.y + hex.in_r)
+                    ctx.closePath();
+                    ctx.fillStyle = "rgba(100,0,200,0.65)"
+                    ctx.fill();
+                    ctx.restore();
 
-function placeUnit(unit) {
-
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(unit.x, unit.y);
-    ctx.moveTo(unit.x - unit.cir_R, unit.y)
-    ctx.lineTo(unit.x - unit.cellside / 2, unit.y - unit.in_r)
-    ctx.lineTo(unit.x + unit.cellside / 2, unit.y - unit.in_r)
-    ctx.lineTo(unit.x + unit.cir_R, unit.y);
-    ctx.lineTo(unit.x + unit.cellside / 2, unit.y + unit.in_r)
-    ctx.lineTo(unit.x - unit.cellside / 2, unit.y + unit.in_r)
-    ctx.closePath();
-    // ctx.fillStyle = "rgba("+(Math.random()*1+1)+","+(Math.random()*1+1)+","+(Math.random()*255+1)+",0.64)";
-    ctx.fillStyle = "rgba(223,123,1,0.6)"
-    ctx.fill();
-    ctx.restore();
 
 }
+let map0=new Mapper();
+map0.props();
+main_map = map0.make();
 
-function checkMap(unit) {
-
-    if (unit.isImpassable) {
-        fillHex(unit);
-    }
+function update() {
+   ctx.clearRect(0,0,1300,450);
+   map0.mapDrawer(main_map);
+   map0.mapChecker(main_map);
 
 }
-
 function timer() {
     fps++
     if (fps > 30) {
@@ -275,57 +259,8 @@ function timer() {
         time = 0;
 
 }
-
-
-
-_map = new Mapper();
-let s = new Soilder();
-// s.placeSoilder(65);
-
-function WTF() {
-
-    for (let i = 0; i < _map.map.length; i++) {
-
-        if (true) {
-
-            console.log(_map.map);
-        }
-
-    }
-}
-
-
-
-
-function update() {
-
-    _map.props();
-    timer();
-    the_map =   _map.update();
-    _map.unitchecker(s, the_map);
-    WTF();
-
-}
-function fillHex(hex) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(hex.x, hex.y);
-        ctx.moveTo(hex.x - hex.cir_R, hex.y)
-        ctx.lineTo(hex.x - hex.cellside     , hex.y - hex.in_r)
-        ctx.lineTo(hex.x + hex.cellside / 2, hex.y - hex.in_r)
-        ctx.lineTo(hex.x + hex.cir_R, hex.y);
-        ctx.lineTo(hex.x + hex.cellside / 2, hex.y + hex.in_r)
-        ctx.lineTo(hex.x - hex.cellside / 2, hex.y + hex.in_r)
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fillStyle = "rgba(50,100,200,0.64)"
-        ctx.restore();
-
-       
-     }
-
 window.addEventListener("load", function () {
-    let canvasW = 1200;
+    let canvasW = 1300;
     let canvasH = 450;
     document.getElementById("testarea").innerHTML = "Welcome To Rangers";
     document.getElementById("drawarea").setAttribute("width", canvasW);
