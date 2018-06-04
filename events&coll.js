@@ -16,8 +16,29 @@ document.addEventListener('mouseup',function(e){
 },false);
 
 document.addEventListener('mousemove', function (e) {
+
+
+    
     mx = e.offsetX;
     my = e.offsetY;
+
+    // if(translate_rate>mx){
+    //     ctx.translate(translate_rate,0)
+    //     mx+=translate_rate;}
+
+    //     if(mx>canvasW-translate_rate){
+    //     ctx.translate(-translate_rate,0)
+    //     mx-=translate_rate;}
+
+    //     if(translate_rate>my){
+    //         ctx.translate(0,translate_rate)
+    //         my+=translate_rate;}
+
+    //     if(my>canvasH-translate_rate){
+    //         ctx.translate(0,-translate_rate)
+    //         my-=translate_rate;}
+
+    
 	//console.log(mx,my)
 }, false);
 
