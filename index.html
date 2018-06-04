@@ -12,45 +12,77 @@
 
     <div class="testarea" id="testarea">Hello</div>
     <div style="display: inline-flex">
-    <button id="backB" onclick="back()">&leftharpoonup;</button>
-    <canvas id="drawarea" width="1280" height="900"></canvas>
-    <button id="forthB"onclick="back()">&leftharpoonup;</button>
+        <canvas id="drawarea" width="1280" height="900"></canvas>
     </div>
 
 
-<div class="props">
     <div class="props">
+        <div class="props">
 
-        <label>Cell Size<input id="cellsize1" type="text" value="20" ></label><br><br>
-        <label>Border Width<input id="borderwidth" type="text" value="13"></label><br><br>
-        <label>Border Height<input id="borderheight" type="text" value="7" ></label><br><br>
-        <label>Initial Posision Y<input id="initposX" type="text" value="1" ></label><br><br>
-        <label>Initial Posision X<input id="initposY" type="text" value="2" ></label><br><br>
-        
+            <label>Cell Size
+                <input id="cellsize1" type="text" value="20">
+            </label>
+            <br>
+            <br>
+            <label>Border Width
+                <input id="borderwidth" type="text" value="40">
+            </label>
+            <br>
+            <br>
+            <label>Border Height
+                <input id="borderheight" type="text" value="10">
+            </label>
+            <br>
+            <br>
+            <label>Initial Posision Y
+                <input id="initposX" type="text" value="1">
+            </label>
+            <br>
+            <br>
+            <label>Initial Posision X
+                <input id="initposY" type="text" value="2">
+            </label>
+            <br>
+            <br>
+
+            <br>
+
+        </div>
+
+
+    </div>
+
+    <div class="props">
+        <label>Place Tank
+            <input id="tank" name="type" type="radio">
+        </label>
         <br>
-        
-    </div>   
+        <br>
+        <label>Place Soilder
+            <input id="soilder" name="type" type="radio">
+        </label>
+        <br>
+        <br>
 
-    
-    </div>  
 
-    <div class="props">
-        <label>Place Tank<input id="tank" name="type" type="radio"></label><br><br>
-        <label>Place Soilder<input id="soilder" name="type" type="radio"></label><br><br>
-        
-    
-        <button class="gui-button" onclick="map0.props()">Apply Settings</button><br><br>
-        
-        <button class="gui-button" onclick="map0.check_console_log()">Check Console</button><br><br>
+        <button class="gui-button" onclick="map0.props()">Apply Settings</button>
+        <br>
+        <br>
 
-        <button class="gui-button" onclick="move_can()">move can</button><br><br>
+        <button class="gui-button" onclick="map0.check_console_log()">Check Console</button>
+        <br>
+        <br>
+
+        <button class="gui-button" onclick="move_can()">move can</button>
+        <br>
+        <br>
 
     </div>
 
     </div>
     <script src="script.js"></script>
     <script src="events&coll.js"></script>
-    
+
 
 </body>
 

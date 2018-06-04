@@ -1,6 +1,9 @@
 let canvas = document.getElementById("drawarea");
 let ctx = canvas.getContext("2d");
 let ctx2 = canvas.getContext("2d");
+let canvasW = 1300;
+let canvasH = 450;
+let translate_rate=8;
 
 let key = {
 
@@ -26,7 +29,6 @@ let board_width=1;
 let board_height=1;
 let closeX = 1.53;
 let closeY = 1.76;
-let the_map = [];
 
 
 class Mapper {
@@ -71,7 +73,7 @@ class Mapper {
 
     make() {
 
-
+        this.props();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let map = [];
 
@@ -84,7 +86,7 @@ class Mapper {
                     if (map.length <= this.width * this.height - 1)
                         map.push({ ...this.hex});
 
-                        console.log(this.hex)
+                        // console.log(this.hex)
 
                 }
 
@@ -122,30 +124,50 @@ class Mapper {
     }
 
     mapChecker(mapC) {
-
-        
-
+            let c = {r:33,g:23,b:1,a:0.55}
             for (let i = 0; i < mapC.length; i++) {
 
-                
+                if(hexhover(mapC[i])&&hexClick(mapC[i])&&mapC[i].isOn==false){
 
-                if(hexhover(mapC[i])&&hexClick(mapC[i])){
-                    
                     mapC[i].isOn=true;
-                    fillHex(mapC[i])
-                    // md=false;
+                    this.fillHex(mapC[i],c)
                     
                 }
-
-                if(mapC[i].isOn==true){
-
-                    fillHex(mapC[i]);
+                else if(hexhover(mapC[i])&&hexClick(mapC[i])&&mapC[i].isOn==true){
+                    mapC[i].isOn=false;
+                    this.fillHex(mapC[i],c)
                 }
+
+                if(mapC[i].isOn==true||hexhover(mapC[i])){
+
+                    this.fillHex(mapC[i],c);
+                }
+                
+                 
                 
           }
-          
-    }
+          md=false;
+        }
+        fillHex(cell,c){
+            let color="rgba("+c.r+","+c.g+", "+c.b+", "+c.a+")";
+            ctx.save();
+            // ctx.strokeStyle = "rgba(200, 10, 100, 1)";
+            ctx.strokeStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(cell.x, cell.y);
+            ctx.moveTo(cell.x - cell.cir_R, cell.y)
+            ctx.lineTo(cell.x - cell.side / 2, cell.y - cell.in_r)
+            ctx.lineTo(cell.x + cell.side / 2, cell.y - cell.in_r)
+            ctx.lineTo(cell.x + cell.cir_R, cell.y);
+            ctx.lineTo(cell.x + cell.side / 2, cell.y + cell.in_r)
+            ctx.lineTo(cell.x - cell.side / 2, cell.y + cell.in_r)
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
 
+
+}
 
 
     props() {
@@ -162,12 +184,14 @@ class Mapper {
 
     }
 
-}
 
-class Unit extends Mapper {
+    }
 
-    constructor(unit) {
-        super();
+
+class Unit {
+
+    constructor() {
+        
         console.log(" Unit Constructer");
         this.range = 20;
         this.pieces = [1];
@@ -178,34 +202,21 @@ class Unit extends Mapper {
         this.isSelected = false;
         this.moveable = false;
         this.isPassable = false;
+        
 
-        if(unit instanceof Soilder)this.pieces=piecesMaker("Soilder");
-        if(unit instanceof Tank)this.pieces=piecesMaker("Tank");
-    
 
     }
-      piecesMaker(checkthis){
-
-        if(checkthis==="Soilder"){
-            console.log("SOLIDER IS HERE")        
-        }
-        if(checkthis==="Tank"){console.log("TANK IS HERE")}
-
-      }
-    
 
 
 }
 
 class Soilder extends Unit {
 
-    constructor(unit) {
+    constructor() {
     
-        super(unit);
+        super();
 
     }
-
-
 
 }
 
@@ -221,32 +232,42 @@ class Tank extends Unit {
 
 
 
-function fillHex(hex){
-                    ctx.save();
-                    ctx.strokeStyle = "rgba(200, 10, 100, 1)";
-                    ctx.beginPath();
-                    ctx.moveTo(hex.x, hex.y);
-                    ctx.moveTo(hex.x - hex.cir_R, hex.y)
-                    ctx.lineTo(hex.x - hex.side / 2, hex.y - hex.in_r)
-                    ctx.lineTo(hex.x + hex.side / 2, hex.y - hex.in_r)
-                    ctx.lineTo(hex.x + hex.cir_R, hex.y);
-                    ctx.lineTo(hex.x + hex.side / 2, hex.y + hex.in_r)
-                    ctx.lineTo(hex.x - hex.side / 2, hex.y + hex.in_r)
-                    ctx.closePath();
-                    ctx.fillStyle = "rgba(100,0,200,0.65)"
-                    ctx.fill();
-                    ctx.restore();
-
-
-}
+        
 let map0=new Mapper();
-map0.props();
-main_map = map0.make();
+let main_map = map0.make();
+
+function main_menu(){
+
+    // if(translate_rate>mx)
+    // ctx.translate(-translate_rate,0);
+    // if(mx>canvasW-translate_rate)
+    // ctx.translate(translate_rate,0);
+
+    for(let i=0;i<main_map.length;i++){
+
+        if(translate_rate>mx)
+        main_map[i].x+=translate_rate;
+
+        if(mx>canvasW-translate_rate)
+        main_map[i].x-=translate_rate;
+
+        if(translate_rate>my)
+        main_map[i].y+=translate_rate;
+
+        if(my>canvasH-translate_rate)
+        main_map[i].y-=translate_rate;
+
+    }
+    
+}
 
 function update() {
+
    ctx.clearRect(0,0,1300,450);
+   main_menu();
    map0.mapDrawer(main_map);
    map0.mapChecker(main_map);
+   
 
 }
 function timer() {
@@ -260,8 +281,7 @@ function timer() {
 
 }
 window.addEventListener("load", function () {
-    let canvasW = 1300;
-    let canvasH = 450;
+    
     document.getElementById("testarea").innerHTML = "Welcome To Rangers";
     document.getElementById("drawarea").setAttribute("width", canvasW);
     document.getElementById("drawarea").setAttribute("height", canvasH);

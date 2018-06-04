@@ -72,7 +72,7 @@ function hexhover(hex){
     var distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance < hex.in_r) {
-        console.log(mx,my)
+        // console.log(mx,my)
         return true;
     }
     
