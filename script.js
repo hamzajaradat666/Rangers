@@ -53,6 +53,13 @@ class Mapper {
             in_r: this.r,
             side: this.cellside,
             cellnum: 1,
+            type: {
+
+                disabled:1,
+                land:2,
+                water:3
+
+            },
             isOn: false
 
         }
@@ -103,6 +110,55 @@ class Mapper {
         return map;
     }
 
+    make2D() {
+
+        this.props();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+
+            var map = [];
+            var rows = board_width;
+            var columns = board_height;
+            for (var i = 0; i < rows; i++) {
+                map.push([0])
+                for (var j = 0; j < columns; j++) {
+                    map[i][j] = 0;
+                }
+            }
+        
+
+        for (let j = this.initPosX; j < this.height + this.initPosX; j += 1) {
+            for (let i = this.initPosY; i < this.width + this.initPosY; i += 1) {
+                this.hex.x = this.hex.x * i * this.cX;
+                this.hex.y = i % 2 == 0 ? this.hex.y * j * this.cY + this.hex.in_r * 2 : this.hex.y * j * this.cY + this.hex.in_r;
+                if (map.length <= this.height * this.width) {
+
+                    if (map.length <= this.width * this.height - 1)
+                        map.push([{ ...this.hex}]);
+
+                    // console.log(this.hex)
+
+                }
+
+
+
+                this.hex.x = this.cellside;
+                this.hex.y = this.cellside;
+                this.hex.cellnum++;
+            }
+        }
+
+        this.hex.cellnum = 1;
+        return map;
+    }
+
+    mapGenerator2D(mapC){
+
+
+
+
+    }
+
     mapDrawer(mapC) {
         for (let i = 0; i < mapC.length; i++) {
             ctx.save();
@@ -116,6 +172,28 @@ class Mapper {
             ctx.lineTo(mapC[i].x + mapC[i].side / 2, mapC[i].y + mapC[i].in_r)
             ctx.lineTo(mapC[i].x - mapC[i].side / 2, mapC[i].y + mapC[i].in_r)
             ctx.fillText(mapC[i].cellnum, mapC[i].x, mapC[i].y);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+        }
+
+
+    }
+
+    mapDrawer2D(mapC) {
+        for (let i = 0; i < mapC.length; i++) 
+        for (let j=0;j<mapC[i].length;j++){
+            ctx.save();
+            ctx.strokeStyle = "rgba(100, 0, 50, 1)";
+            ctx.beginPath();
+            ctx.moveTo(mapC[i][j].x, mapC[i][j].y);
+            ctx.moveTo(mapC[i][j].x - mapC[i][j].cir_R, mapC[i][j].y)
+            ctx.lineTo(mapC[i][j].x - mapC[i][j].side / 2, mapC[i][j].y - mapC[i][j].in_r)
+            ctx.lineTo(mapC[i][j].x + mapC[i][j].side / 2, mapC[i][j].y - mapC[i][j].in_r)
+            ctx.lineTo(mapC[i][j].x + mapC[i][j].cir_R, mapC[i][j].y);
+            ctx.lineTo(mapC[i][j].x + mapC[i][j].side / 2, mapC[i][j].y + mapC[i][j].in_r)
+            ctx.lineTo(mapC[i][j].x - mapC[i][j].side / 2, mapC[i][j].y + mapC[i][j].in_r)
+            ctx.fillText(mapC[i][j].cellnum, mapC[i][j].x, mapC[i][j].y);
             ctx.closePath();
             ctx.stroke();
             ctx.restore();
@@ -159,6 +237,44 @@ class Mapper {
             }
             md = false;
         }
+
+        mapChecker2D(mapC) {
+            let c = {
+                r: 133,
+                g: 23,
+                b: 1,
+                a: 0.55
+            }
+            for (let i = 0; i < mapC.length; i++) 
+            for (let j=0;j<mapC[i].length;j++){
+    
+                if (hexhover(mapC[i][j]) && hexClick(mapC[i][j]) && mapC[i][j].isOn == false) {
+    
+                    mapC[i][j].isOn = true;
+                    this.fillHex(mapC[i][j], c)
+    
+                } else if (hexhover(mapC[i][j]) && mapC[i][j].isOn == true) {
+    
+                    this.fillHex(mapC[i][j], c)
+    
+                    if (hexClick(mapC[i][j])) {
+    
+                        mapC[i][j].isOn = false;
+                        this.fillHex(mapC[i][j], c)
+                    }
+                }
+    
+                    if (mapC[i][j].isOn == true || hexhover(mapC[i][j])) {
+    
+                        this.fillHex(mapC[i][j], c);
+                    }
+    
+    
+    
+                }
+                md = false;
+            }
+
         fillHex(cell, c) {
             let color = "rgba(" + c.r + "," + c.g + ", " + c.b + ", " + c.a + ")";
             ctx.save();
@@ -245,7 +361,8 @@ class Mapper {
 
 
     let map0 = new Mapper();
-    let main_map = map0.make();
+    let main_map = map0.make2D();
+    console.log(main_map)
 
     function main_menu() {
 
@@ -278,8 +395,8 @@ class Mapper {
     function update() {
 
         ctx.clearRect(0, 0, canvasW, canvasH);
-        map0.mapDrawer(main_map);
-        map0.mapChecker(main_map);
+        map0.mapDrawer2D(main_map);
+        map0.mapChecker2D(main_map);
 
 
     }
