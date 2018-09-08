@@ -5,6 +5,8 @@ let canvasW = document.body.clientWidth;
 let canvasH = document.body.clientHeight / 3 * 2;
 let translate_rate = 8;
 let generate = false;
+let carImg = new Image();
+carImg.src ="assets/Card2.png";
 
 let key = {
 
@@ -207,6 +209,7 @@ class Mapper {
                 ctx.fillText(/* mapC[i][j].cellnum+ "-"+*/i+"-"+j, mapC[i][j].x, mapC[i][j].y);
                 ctx.closePath();
                 ctx.stroke();
+                ctx.drawImage(carImg,mapC[i][j].x-mapC[i][j].side,mapC[i][j].y-mapC[i][j].side,mapC[i][j].side*2,mapC[i][j].side*2);
                 ctx.restore();
             }
 
@@ -229,7 +232,7 @@ class Mapper {
 
             } else if (hexhover(mapC[i]) && mapC[i].isOn == true) {
 
-                this.fillHex(mapC[i], c)
+                this.strokeHex(mapC[i], c)
 
                 if (hexClick(mapC[i])) {
 
@@ -266,7 +269,7 @@ class Mapper {
 
                 } else if (hexhover(mapC[i][j]) && mapC[i][j].isOn == true) {
 
-                    this.fillHex(mapC[i][j], c)
+                    this.strokeHex(mapC[i][j], c)
 
                     if (hexClick(mapC[i][j])) {
 
@@ -322,6 +325,27 @@ class Mapper {
         ctx.closePath();
         ctx.fillStyle = color;
         ctx.fill();
+        ctx.restore();
+
+
+    }
+
+    strokeHex(cell, c) {
+        let color = "rgba(" + c.r + "," + c.g + ", " + c.b + ", " + c.a + ")";
+        ctx.save();
+        
+        ctx.beginPath();
+        ctx.moveTo(cell.x, cell.y);
+        ctx.moveTo(cell.x - cell.cir_R, cell.y)
+        ctx.lineTo(cell.x - cell.side / 2, cell.y - cell.in_r)
+        ctx.lineTo(cell.x + cell.side / 2, cell.y - cell.in_r)
+        ctx.lineTo(cell.x + cell.cir_R, cell.y);
+        ctx.lineTo(cell.x + cell.side / 2, cell.y + cell.in_r)
+        ctx.lineTo(cell.x - cell.side / 2, cell.y + cell.in_r)
+        ctx.closePath();
+        ctx.strokeStyle = color;
+        ctx.strokeStyle = "rgba(200, 10, 100, 1)";
+        ctx.stroke();
         ctx.restore();
 
 
