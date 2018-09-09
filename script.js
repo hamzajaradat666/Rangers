@@ -1,12 +1,25 @@
+function loadDoc() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+       console.log(JSON.parse(this.responseText))
+      }
+    };
+    xhttp.open("GET", "Cards.json", true);
+    xhttp.send();
+   } 
+
+
 let canvas = document.getElementById("drawarea");
 let ctx = canvas.getContext("2d");
 let ctx2 = canvas.getContext("2d");
 let canvasW = document.body.clientWidth;
-let canvasH = document.body.clientHeight / 3 * 2;
+let canvasH = document.body.clientHeight+150;
+ 
 let translate_rate = 8;
 let generate = false;
 let carImg = new Image();
-carImg.src ="assets/Card2.png";
+carImg.src = "assets/Dragon.png";
 
 let key = {
 
@@ -25,28 +38,29 @@ let time = 0;
 let callOnce = true;
 let cellside;
 cellside = parseInt(document.getElementById("cellsize1").value);
+
 let r = cellside * Math.sqrt(3) / 2;
 let initPosX = 1;
 let initPosY = 1;
 let board_width = 1;
 let board_height = 1;
-let closeX = 1.53;
-let closeY = 1.76;
+let closeX = 1.50;
+let closeY = 1.73;
 
-var levelData=[
-[-1,-1,-1,0,0,0,0,0,0,0,-1,-1,-1],
-[-1,-1,0,0,0,0,0,0,0,0,-1,-1,-1],
-[-1,-1,0,0,0,0,0,0,0,0,0,-1,-1],
-[-1,0,0,0,0,0,0,0,0,0,0,-1,-1],
-[-1,0,0,0,0,0,0,0,0,0,0,0,-1],
-[0,0,0,0,0,0,0,0,0,0,0,0,-1],
-[0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,-1],
-[-1,0,0,0,0,0,0,0,0,0,0,0,-1],
-[-1,0,0,0,0,0,0,0,0,0,0,-1,-1],
-[-1,-1,0,0,0,0,0,0,0,0,0,-1,-1],
-[-1,-1,0,0,0,0,0,0,0,0,-1,-1,-1],
-[-1,-1,-1,0,0,0,0,0,0,0,-1,-1,-1]
+var levelData = [
+    [-1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1],
+    [-1, -1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1],
+    [-1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1],
+    [-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1],
+    [-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1],
+    [-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1],
+    [-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1],
+    [-1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1],
+    [-1, -1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1],
+    [-1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1]
 ];
 
 
@@ -62,10 +76,8 @@ class Mapper {
         this.r = this.cellside * Math.sqrt(3) / 2;
         this.cX = closeX;
         this.cY = closeY;
-
-
+        this.map;
         this.hex = {
-
             x: this.cellside,
             y: this.cellside,
             cir_R: this.cellside,
@@ -73,33 +85,19 @@ class Mapper {
             side: this.cellside,
             cellnum: 1,
             type: {
-
                 disabled: 1,
                 land: 2,
                 water: 3
-
             },
             isOn: false
 
         }
 
-
     }
-
-
-    check_console_log() {
-
-        console.clear();
-        console.log(this.map);
-
-
-    }
-
-
 
     make() {
 
-        this.props();
+        this.start();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let map = [];
 
@@ -109,7 +107,7 @@ class Mapper {
                 this.hex.y = i % 2 == 0 ? this.hex.y * j * this.cY + this.hex.in_r * 2 : this.hex.y * j * this.cY + this.hex.in_r;
                 if (map.length <= this.height * this.width) {
 
-                    
+
                     if (map.length <= this.width * this.height - 1)
                         map.push({ ...this.hex
                         });
@@ -132,12 +130,11 @@ class Mapper {
 
     make2D() {
 
-        this.props();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         let map = []
         let inner_map = [];
-      
+
         for (let i = this.initPosY; i < this.width + this.initPosY; i += 1) {
 
             for (let j = this.initPosX; j < this.height + this.initPosX; j += 1) {
@@ -145,32 +142,49 @@ class Mapper {
                 this.hex.x = this.hex.x * j * this.cX;
                 this.hex.y = j % 2 == 0 ? this.hex.y * i * this.cY + this.hex.in_r * 2 : this.hex.y * i * this.cY + this.hex.in_r;
 
-                  
-                inner_map.push({ ...this.hex});
-                   
-                    
-                        
+
+                inner_map.push({ ...this.hex
+                });
+
+
+
                 this.hex.x = this.cellside;
                 this.hex.y = this.cellside;
                 this.hex.cellnum++;
             }
             map.push(inner_map);
-            inner_map=[];
+            inner_map = [];
 
         }
 
         this.hex.cellnum = 1;
+        console.log(map)
         return map;
     }
 
-    mapGenerator2D(mapC) {
+    mapGenerator2D() {
+
+        for (let i = 0; i < this.map.length; i++)
+            for (let j = 0; j < this.map[i].length; j++){
+
+                this.map[i][j].isOn=levelData[i][j];            }
+
+            }            
+
+        
 
 
 
-
-    }
 
     mapDrawer(mapC) {
+        let c = {
+            r: 133,
+            g: 23,
+            b: 1,
+            a: 0.55
+        }
+
+
         ctx.clearRect(0, 0, canvasW, canvasH);
         for (let i = 0; i < mapC.length; i++) {
             ctx.save();
@@ -187,48 +201,14 @@ class Mapper {
             ctx.closePath();
             ctx.stroke();
             ctx.restore();
-        }
 
 
-    }
-
-    mapDrawer2D_vertical(mapC) {
-        ctx.clearRect(0, 0, canvasW, canvasH);
-        for (let i = 0; i < mapC.length; i++)
-            for (let j = 0; j < mapC[i].length; j++) {
-                ctx.save();
-                ctx.strokeStyle = "rgba(100, 0, 50, 1)";
-                ctx.beginPath();
-                ctx.moveTo(mapC[i][j].x, mapC[i][j].y);
-                ctx.moveTo(mapC[i][j].x - mapC[i][j].cir_R, mapC[i][j].y)
-                ctx.lineTo(mapC[i][j].x - mapC[i][j].side / 2, mapC[i][j].y - mapC[i][j].in_r)
-                ctx.lineTo(mapC[i][j].x + mapC[i][j].side / 2, mapC[i][j].y - mapC[i][j].in_r)
-                ctx.lineTo(mapC[i][j].x + mapC[i][j].cir_R, mapC[i][j].y);
-                ctx.lineTo(mapC[i][j].x + mapC[i][j].side / 2, mapC[i][j].y + mapC[i][j].in_r)
-                ctx.lineTo(mapC[i][j].x - mapC[i][j].side / 2, mapC[i][j].y + mapC[i][j].in_r)
-                ctx.fillText(/* mapC[i][j].cellnum+ "-"+*/i+"-"+j, mapC[i][j].x, mapC[i][j].y);
-                ctx.closePath();
-                ctx.stroke();
-                ctx.drawImage(carImg,mapC[i][j].x-mapC[i][j].side,mapC[i][j].y-mapC[i][j].side,mapC[i][j].side*2,mapC[i][j].side*2);
-                ctx.restore();
-            }
-
-
-    }
-
-    mapChecker(mapC) {
-        let c = {
-            r: 133,
-            g: 23,
-            b: 1,
-            a: 0.55
-        }
-        for (let i = 0; i < mapC.length; i++) {
 
             if (hexhover(mapC[i]) && hexClick(mapC[i]) && mapC[i].isOn == false) {
 
                 mapC[i].isOn = true;
                 this.fillHex(mapC[i], c)
+
 
             } else if (hexhover(mapC[i]) && mapC[i].isOn == true) {
 
@@ -245,68 +225,84 @@ class Mapper {
 
                 this.fillHex(mapC[i], c);
             }
-
-
-
         }
         md = false;
+
+
     }
 
-    mapChecker2D(mapC) {
+    mapDrawer2D_vertical() {
         let c = {
             r: 133,
             g: 213,
             b: 1,
             a: 0.55
         }
-        for (let i = 0; i < mapC.length; i++)
-            for (let j = 0; j < mapC[i].length; j++) {
+        ctx.clearRect(0, 0, canvasW, canvasH);
+        for (let i = 0; i < this.map.length; i++)
+            for (let j = 0; j < this.map[i].length; j++) {
 
-                if (hexhover(mapC[i][j]) && hexClick(mapC[i][j]) && mapC[i][j].isOn == false) {
+                ctx.save();
+                ctx.strokeStyle = "rgba(200, 0, 50, 1)";
+                ctx.fillStyle = "rgba(2, 200, 50, 0.4)";
+                ctx.beginPath();
+                ctx.moveTo(this.map[i][j].x, this.map[i][j].y);
+                ctx.moveTo(this.map[i][j].x - this.map[i][j].cir_R, this.map[i][j].y)
+                ctx.lineTo(this.map[i][j].x - this.map[i][j].side / 2, this.map[i][j].y - this.map[i][j].in_r)
+                ctx.lineTo(this.map[i][j].x + this.map[i][j].side / 2, this.map[i][j].y - this.map[i][j].in_r)
+                ctx.lineTo(this.map[i][j].x + this.map[i][j].cir_R, this.map[i][j].y);
+                ctx.lineTo(this.map[i][j].x + this.map[i][j].side / 2, this.map[i][j].y + this.map[i][j].in_r)
+                ctx.lineTo(this.map[i][j].x - this.map[i][j].side / 2, this.map[i][j].y + this.map[i][j].in_r)
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = "black"
+                ctx.font = "8px Arial";
+                ctx.fillText( /* this.map[i][j].cellnum+ "-"+*/ i + "-" + j, this.map[i][j].x, this.map[i][j].y);
+                ctx.restore();
 
-                    mapC[i][j].isOn = true;
-                    this.fillHex(mapC[i][j], c)
+                if (hexhover(this.map[i][j]) && hexClick(this.map[i][j]) && this.map[i][j].isOn == false) {
 
-                } else if (hexhover(mapC[i][j]) && mapC[i][j].isOn == true) {
+                    this.map[i][j].isOn = true;
+                    this.strokeHex(this.map[i][j], c)
 
-                    this.strokeHex(mapC[i][j], c)
+                } else if (hexhover(this.map[i][j]) && this.map[i][j].isOn == true) {
 
-                    if (hexClick(mapC[i][j])) {
+                    this.strokeHex(this.map[i][j], c)
 
-                        mapC[i][j].isOn = false;
-                        this.fillHex(mapC[i][j], c)
+                    if (hexClick(this.map[i][j])) {
+
+                        this.map[i][j].isOn = false;
+                        this.strokeHex(this.map[i][j], c)
                     }
                 }
 
-                if (mapC[i][j].isOn == true || hexhover(mapC[i][j])) {
-
-
-                    this.fillHex(mapC[i][j], c);
-
-
-
+                if (this.map[i][j].isOn == true || hexhover(this.map[i][j])) {
+                    let c = {
+                        r: 233,
+                        g: 213,
+                        b: 122,
+                        a: 0
+                    }
+                    this.strokeHex(this.map[i][j],c)
+                    this.drawImage(this.map[i][j]);
                 }
+                 /* if (this.map[i][j].isOn == true && hexhover(this.map[i][j])) {
 
-                if (mapC[i][j].isOn == true && hexhover(mapC[i][j])) {
+                    this.fillHex(this.map[i+1][j], c);
+                    this.fillHex(this.map[i+2][j], c);
+                    this.fillHex(this.map[i+3][j], c);
+                    this.fillHex(this.map[i+4][j], c);
+                    this.fillHex(this.map[i+5][j], c);
+                    this.fillHex(this.map[i+6][j], c);
+                    this.fillHex(this.map[i+7][j], c);
+                    this.fillHex(this.map[i+8][j], c);
+                    this.fillHex(this.map[i+9][j], c);
+                    this.fillHex(this.map[i][j], c);
 
-                    
-                    this.fillHex(mapC[i+1][j], c);
-                    this.fillHex(mapC[i+2][j], c);
-                    this.fillHex(mapC[i+3][j], c);
-                    this.fillHex(mapC[i+4][j], c);
-                    this.fillHex(mapC[i+5][j], c);
-                    this.fillHex(mapC[i+6][j], c);
-                    this.fillHex(mapC[i+7][j], c);
-                    this.fillHex(mapC[i+8][j], c);
-                    this.fillHex(mapC[i+9][j], c);
-                    this.fillHex(mapC[i][j], c);
-
-                }
-
-
-
+                }  */
             }
         md = false;
+
     }
 
     fillHex(cell, c) {
@@ -333,7 +329,7 @@ class Mapper {
     strokeHex(cell, c) {
         let color = "rgba(" + c.r + "," + c.g + ", " + c.b + ", " + c.a + ")";
         ctx.save();
-        
+
         ctx.beginPath();
         ctx.moveTo(cell.x, cell.y);
         ctx.moveTo(cell.x - cell.cir_R, cell.y)
@@ -344,31 +340,33 @@ class Mapper {
         ctx.lineTo(cell.x - cell.side / 2, cell.y + cell.in_r)
         ctx.closePath();
         ctx.strokeStyle = color;
-        ctx.strokeStyle = "rgba(200, 10, 100, 1)";
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "rgba(200, 110, 100, 1)";
         ctx.stroke();
         ctx.restore();
 
 
     }
 
+    drawImage(cell) {
 
-    props() {
+        ctx.drawImage(carImg, cell.x - cell.side, cell.y - cell.side, cell.side * 2, cell.side * 2);
+    }
 
+
+    start() {
 
         this.cellside = cellside;
         this.width = Math.floor(parseInt(document.getElementById("borderwidth").value) / 2) * 2;
         this.height = parseInt(document.getElementById("borderheight").value);
         this.initPosX = Math.floor(parseInt(document.getElementById("initposX").value) / 2) * 2;
         this.initPosY = Math.floor(parseInt(document.getElementById("initposY").value) / 2) * 2;
-
-
-
+        this.map = this.make2D();
 
     }
 
 
 }
-
 
 class Unit {
 
@@ -392,36 +390,9 @@ class Unit {
 
 }
 
-class Soilder extends Unit {
-
-    constructor() {
-
-        super();
-
-    }
-
-}
-
-class Tank extends Unit {
-
-    constructor() {
-
-        super();
-
-
-    }
-}
-
-
-
-
-
-
 function main_menu() {
 
-
-
-    if (translate_rate > mx) {
+    if (mx<50) {
         ctx.translate(translate_rate, 0)
         mx += translate_rate;
     }
@@ -440,27 +411,34 @@ function main_menu() {
         ctx.translate(0, -translate_rate)
         my -= translate_rate;
     }
-
-
-
 }
+
+
 let map0 = new Mapper();
-let main_map;
 
-function the_props(){
 
+function start() {
+
+
+    map0.start();
+  
+   
     
-    map0.props();
-    main_map = map0.make2D();
-    console.log(main_map)
+
 
 }
-
 function update() {
 
+    if (callOnce) {
+        map0.start();
+       
+        callOnce = false;
+    }
+    // main_menu();
+    map0.mapDrawer2D_vertical();
     
-    map0.mapDrawer2D_vertical(main_map);
-    map0.mapChecker2D(main_map);
+      
+
 
 
 }
@@ -477,10 +455,11 @@ function timer() {
 }
 window.addEventListener("load", function () {
 
-    document.getElementById("testarea").innerHTML = "Welcome To Rangers";
-    document.getElementById("drawarea").setAttribute("width", canvasW);
+    
+    document.getElementById("drawarea").setAttribute("width", canvasW*5);
     document.getElementById("drawarea").setAttribute("height", canvasH);
-
+    let gg = loadDoc();
+    console.log(gg); 
     setInterval(update, 1000 / fps);
 
 

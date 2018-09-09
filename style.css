@@ -1,55 +1,17 @@
 body{
+    background-color: #000;
+    overflow: hidden;
+}
+#drawarea{
     
-    background-color: rgb(46, 46, 46);
-    transition: 1.5s;
+    top: 0;
+    left: 0;
+    background-color: rgb(48, 24, 24);
+    border: 5px ridge rgb(58, 17, 27); 
     
 }
-
-.testarea{
-    
-    margin-bottom: 10px;
-    background-color: #ffffff;
-    
-}
-
-canvas{
-    
-    background-color: rgb(211, 211, 211);
-    border: solid 2px rgb(26, 63, 112);
-    border-radius: 10px;
-    /* margin: 0% 5%; */
-    transition: 1.5s;
-    
-}
-.props {
-    
-    border: solid 1px rgb(110, 110, 110);
-    padding: 10px;
-    display: -webkit-inline-flex;
-    background-color: rgb(146, 146, 146);
-    transition: 1.5s;
-    
-    
-   
-}
-
-
-button{
-    
-    border-radius: 10px;
-    background-color: rgb(18, 8, 44);
-    color: #cfcfcf;
-    transition: .5s;
-}
-button:hover{
-    
-    border-radius: 10px;
-    background-color: rgb(223, 223, 223);
-    color: rgb(117, 117, 117);
-    transition: .5s;
-}
-
-
-input{
-    display: inline;
+.props{
+    position: fixed;
+    color: darkslateblue;
+    background-color: #122;
 }

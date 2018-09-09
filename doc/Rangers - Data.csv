@@ -1,0 +1,53 @@
+﻿,,,
+Name,Type-Desc,Requirements,Area Requirements
+Peasant,Type: Mortal,Building: any,Placement: 1 tile
+,Ability: None,Summon: None,Range: 1 tile around unit
+,Desc: A mere sacrifice,,
+,Hp/Dm: 1/1,,
+,,,
+Hawk,Type: Mortal,Building: Towers,Placement: 1 tile
+,Ability: Can attack only mortals,Summon: None,Range: Straight LOS
+,Desc:  Flesh Hater,,
+,Hp/Dm: 1/5,,
+,,,
+Scout,Type: Mortal,Building: Towers,Placement: 1 tile
+,Ability: None,Summon: None,Range: 0
+,Desc:  Like a wall but with flesh,,
+,Hp/Dm: 1/0,,
+,,,
+Sword Fellow,Type: Mortal,Building: Barracks Summon: None,Placement: 1 tile
+,Ability: None,,Range: 1 tile around
+,Desc:  A Young with A Sword,,
+,Hp/Dm: 2/2,,
+,,,
+Sword Man,Type: Mortal,Building: Barracks,Placement: 1 tile
+,Ability: None,Summon: Needs Two Barracks,Range: 1 tile around
+,Desc:  A Man with A Sword,,
+,Hp/Dm: 3/4,,
+,,,
+Knight,Type: Mortal,Building: Barracks,Placement: 2 tiles Horizontally
+,Ability: Can Move 1 additional tile after any,Summon: Needs Three Barracks,Range: 1 tile around
+,Move card,,
+,Desc:  A Man with A Sword and a horse,,
+,Hp/Dm: 3/4,,
+,,,
+Orc,Type: Creature,Building: Creatures Dome,Placement: 1 tile
+,Ability: None,Summon: None,Range: 1 tile around
+,Desc:  Human Worst Enemies,,
+,Hp/Dm: 4/4,,
+,,,
+Fire Golem,Type: Creature,Building: Creatures Dome,Placement: 2 tiles
+,Ability: None,Summon: None,Range: 1 tile around   
+,Desc: a Moving Fire,,
+,Hp/Dm: 5/7,,
+,,,
+Dragon,Type: Creature,Summon: Two Creatures Dome,Placement: A Full 7 tiles Hex
+,Ability: Attack Once Every 5 turns,,Range: Anywhere
+,Desc: a Moving Fire,,
+,Hp/Dm: 12/8,,
+,,,
+Water Golem,Type: Creature,Building: Creatures Dome,Placement: 2 tiles
+,Ability: Destroy a Fire Golem in Battle,Summon: Two Creatures Dome,Range: 1 tile around   
+,Desc: a Moving lake,,
+,Hp/Dm: 5/5,,
+,,,
