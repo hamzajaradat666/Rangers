@@ -1,0 +1,145 @@
+{ 
+
+    "peasent":{
+
+        "hp":1,
+        "damage":1,
+        "type":"mortal",
+        "ability":"none",
+        "desc":"a mere sarifice",
+        "build_req":"none",
+        "summon_req":"none",
+        "place_req":1,
+        "range":1,
+        "look":"./assets/peasent.png"
+
+    },
+    "hawk":{
+
+        "hp":1,
+        "damage":5,
+        "type":"mortal",
+        "ability":"can attack only mortals",
+        "desc":"flesh hater",
+        "build_req":"tower",
+        "summon_req":"none",
+        "place_req":1,
+        "range":999,
+        "look":"./assets/hawk.png"
+
+    },
+    "Scout":{
+
+        "hp":1,
+        "damage":0,
+        "type":"mortal",
+        "ability":"none",
+        "desc":"like a wall",
+        "build_req":"tower",
+        "summon_req":"none",
+        "place_req":1,
+        "range":0,
+        "look":"./assets/scout.png"
+
+    },
+    "sword_fellow":{
+
+        "hp":2,
+        "damage":2,
+        "type":"mortal",
+        "ability":"none",
+        "desc":"a young with a sword",
+        "build_req":"barrack",
+        "summon_req":"none",
+        "place_req":1,
+        "range":1,
+        "look":"./assets/sword_fellow.png"
+
+    },
+    "sword_man":{
+
+        "hp":3,
+        "damage":4,
+        "type":"mortal",
+        "ability":"none",
+        "desc":"a man with a sword",
+        "build_req":"barrack",
+        "summon_req":"none",
+        "place_req":1,
+        "range":1,
+        "look":"./assets/sword_man.png"
+
+    },
+    "knight":{
+
+        "hp":3,
+        "damage":4,
+        "type":"mortal",
+        "ability":"+1 move",
+        "desc":"a man with a sword and a horse",
+        "build_req":"2 barrack",
+        "summon_req":"none",
+        "place_req":2   ,
+        "range":1,
+        "look":"./assets/knight.png"
+
+    },
+    "orc":{
+
+        "hp":4,
+        "damage":4,
+        "type":"creature",
+        "ability":"none",
+        "desc":"shrek",
+        "build_req":"creature_dome",
+        "summon_req":"none",
+        "place_req":1,
+        "range":1,
+        "look":"./assets/orc.png"
+
+    },
+    "fire_golem":{
+
+        "hp":5,
+        "damage":7,
+        "type":"creature",
+        "ability":"none",
+        "desc":"a moving fire",
+        "build_req":"creature_dome",
+        "summon_req":"none",
+        "place_req":2,
+        "range":1,
+        "look":"./assets/fire_golem.png"
+
+    },
+    "water_golem":{
+
+        "hp":5,
+        "damage":5,
+        "type":"creature",
+        "ability":"kills fire golem on summon",
+        "desc":"a moving sea",
+        "build_req":"2 creature_dome",
+        "summon_req":"none",
+        "place_req":2,
+        "range":1,
+        "look":"./assets/water_golem.png"
+
+    },
+    "dragon":{
+
+        "hp":12,
+        "damage":8,
+        "type":"creature",
+        "ability":"attack once every 5 turns",
+        "desc":"donkeys lover",
+        "build_req":"2 creature_dome",
+        "summon_req":"none",
+        "place_req":7,
+        "range":999,
+        "look":"./assets/dragon.png"
+
+    }
+
+
+    }
