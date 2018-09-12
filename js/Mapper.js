@@ -1,5 +1,12 @@
+import { loadDoc } from "./ajax.js";
+var carImg = new Image();
+ loadDoc(Units => {
 
-let cellside = parseInt(document.getElementById("cellsize1").value);
+    console.log(Units.fire_golem);   
+    carImg.src = Units.fire_golem.look;
+ })
+
+let cellside = document.body.clientWidth / 100 * 2.5;
 let r = cellside * Math.sqrt(3) / 2;
 let initPosX = 1;
 let initPosY = 1;
@@ -16,8 +23,7 @@ let canvasH = document.body.clientHeight;
 document.getElementById("drawarea").setAttribute("width", canvasW * 5);
 document.getElementById("drawarea").setAttribute("height", canvasH);
 
-let carImg = new Image();
-carImg.src = "./assets/peasent.png"
+
 
 export class Mapper {
 
@@ -44,6 +50,7 @@ export class Mapper {
                 land: 2,
                 water: 3
             },
+            isOccupied:{},
             isOn: false
 
         }
@@ -120,16 +127,12 @@ export class Mapper {
     mapGenerator2D() {
 
         for (let i = 0; i < this.map.length; i++)
-            for (let j = 0; j < this.map[i].length; j++){
+            for (let j = 0; j < this.map[i].length; j++) {
 
-                this.map[i][j].isOn=levelData[i][j];            }
+                this.map[i][j].isOn = levelData[i][j];
+            }
 
-            }            
-
-        
-
-
-
+    }
 
     mapDrawer(mapC) {
         let c = {
@@ -186,6 +189,8 @@ export class Mapper {
 
     }
 
+
+
     mapDrawer2D_vertical() {
         let c = {
             r: 133,
@@ -238,23 +243,10 @@ export class Mapper {
                         b: 122,
                         a: 0
                     }
-                    this.strokeHex(this.map[i][j],c)
+                    this.strokeHex(this.map[i][j], c)
                     this.drawImage(this.map[i][j]);
                 }
-                 /* if (this.map[i][j].isOn == true && hexhover(this.map[i][j])) {
-
-                    this.fillHex(this.map[i+1][j], c);
-                    this.fillHex(this.map[i+2][j], c);
-                    this.fillHex(this.map[i+3][j], c);
-                    this.fillHex(this.map[i+4][j], c);
-                    this.fillHex(this.map[i+5][j], c);
-                    this.fillHex(this.map[i+6][j], c);
-                    this.fillHex(this.map[i+7][j], c);
-                    this.fillHex(this.map[i+8][j], c);
-                    this.fillHex(this.map[i+9][j], c);
-                    this.fillHex(this.map[i][j], c);
-
-                }  */
+              
             }
         md = false;
 
@@ -325,7 +317,7 @@ export class Mapper {
 
 function main_menu() {
 
-    if (mx<50) {
+    if (mx < 50) {
         ctx.translate(translate_rate, 0)
         mx += translate_rate;
     }

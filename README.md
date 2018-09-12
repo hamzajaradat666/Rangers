@@ -1,2 +1,0 @@
-# Rangers
-A Board Game.

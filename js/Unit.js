@@ -1,18 +1,9 @@
-import {
-    loadUnit
-} from "./ajax.js";
-
-loadUnit(function (data) {
-    
-    
-    
-});
-
 
 export class Unit {
 
     constructor() {
 
+        
         console.log(" Unit Constructer");
         this.range = 20;
         this.pieces = [1];

@@ -1,7 +1,7 @@
 export function loadDoc(cb) {
   var xhttp = new XMLHttpRequest();
   
-  xhttp.open("GET", "unit.json", true);
+  xhttp.open("GET", "./json/unit.json", true);
   xhttp.send();
 
   xhttp.onreadystatechange = function() {
