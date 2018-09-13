@@ -1,19 +1,18 @@
-import { loadDoc } from "./ajax.js";
-var carImg = new Image();
- loadDoc(Units => {
-
-    console.log(Units.fire_golem);   
-    carImg.src = Units.fire_golem.look;
- })
+import { loadUnits } from "./ajax.js";
+import { Unit } from "./Unit.js";
+import { Card } from "./Card.js";
+var tileImg = new Image();
+var unitsData;
+var deck = [];
 
 let cellside = document.body.clientWidth / 100 * 2.5;
-let r = cellside * Math.sqrt(3) / 2;
 let initPosX = 1;
 let initPosY = 1;
 let board_width = 1;
 let board_height = 1;
 let closeX = 1.50;
 let closeY = 1.73;
+
 
 let canvas = document.getElementById("drawarea");
 let ctx = canvas.getContext("2d");
@@ -74,7 +73,7 @@ export class Mapper {
                         map.push({ ...this.hex
                         });
 
-                    // console.log(this.hex)
+                   
 
                 }
 
@@ -217,7 +216,7 @@ export class Mapper {
                 ctx.fill();
                 ctx.fillStyle = "black"
                 ctx.font = "8px Arial";
-                ctx.fillText( /* this.map[i][j].cellnum+ "-"+*/ i + "-" + j, this.map[i][j].x, this.map[i][j].y);
+                ctx.fillText(i + "-" + j, this.map[i][j].x, this.map[i][j].y);
                 ctx.restore();
 
                 if (hexhover(this.map[i][j]) && hexClick(this.map[i][j]) && this.map[i][j].isOn == false) {
@@ -252,10 +251,20 @@ export class Mapper {
 
     }
 
+
+    cardsDrawer(){
+
+        let scale = 120
+        let cardX = 100;
+        let cardY = canvasH-130;
+            for(let i=0;i<deck.length;i++)
+            ctx.drawImage(deck[i].look,deck[i].x*i,deck[i].y,scale,scale)
+
+    }
+
     fillHex(cell, c) {
         let color = "rgba(" + c.r + "," + c.g + ", " + c.b + ", " + c.a + ")";
         ctx.save();
-        // ctx.strokeStyle = "rgba(200, 10, 100, 1)";
         ctx.strokeStyle = color;
         ctx.beginPath();
         ctx.moveTo(cell.x, cell.y);
@@ -297,7 +306,9 @@ export class Mapper {
 
     drawImage(cell) {
 
-        ctx.drawImage(carImg, cell.x - cell.side, cell.y - cell.side, cell.side * 2, cell.side * 2);
+        
+        ctx.drawImage(deck[1].look, cell.x - cell.side, cell.y - cell.side, cell.side * 2, cell.side * 2);
+        
     }
 
 
@@ -308,32 +319,28 @@ export class Mapper {
         this.height = parseInt(document.getElementById("borderheight").value);
         this.initPosX = Math.floor(parseInt(document.getElementById("initposX").value) / 2) * 2;
         this.initPosY = Math.floor(parseInt(document.getElementById("initposY").value) / 2) * 2;
+        loadUnits(Units => {
+
+            console.log(Units.fire_golem);   
+            tileImg.src = Units.fire_golem.look;
+            unitsData = Units;
+            console.log(unitsData)
+            deck.push(new Card(unitsData.peasent),new Card(unitsData.water_golem),new Card(unitsData.hawk),new Card(unitsData.orc),new Card(unitsData.fire_golem))
+          
+            
+            
+         })
+         
         this.map = this.make2D();
 
     }
 
+    runtime(){
 
-}
-
-function main_menu() {
-
-    if (mx < 50) {
-        ctx.translate(translate_rate, 0)
-        mx += translate_rate;
+        
+        this.mapDrawer2D_vertical();
+        this.cardsDrawer();
     }
 
-    if (mx > canvasW - translate_rate) {
-        ctx.translate(-translate_rate, 0)
-        mx -= translate_rate;
-    }
 
-    if (translate_rate > my) {
-        ctx.translate(0, translate_rate)
-        my += translate_rate;
-    }
-
-    if (my > canvasH - translate_rate) {
-        ctx.translate(0, -translate_rate)
-        my -= translate_rate;
-    }
 }

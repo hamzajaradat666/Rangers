@@ -1,7 +1,7 @@
 {  
 
     "peasent":{
-
+        "id":1,
         "name":"peasent",
         "hp":1,
         "damage":1,
@@ -17,6 +17,7 @@
     },
     "hawk":{
 
+        "id":2,
         "name":"hawk",
         "hp":1,
         "damage":5,
@@ -31,7 +32,7 @@
 
     },
     "Scout":{
-
+        "id":3,
         "name":"scout",
         "hp":1,
         "damage":0,
@@ -47,6 +48,7 @@
     },
     "sword_fellow":{
 
+        "id":4,
         "name":"sword_fellow",
         "hp":2,
         "damage":2,
@@ -62,6 +64,7 @@
     },
     "sword_man":{
 
+        "id":5,
         "name":"sword_man",
         "hp":3,
         "damage":4,
@@ -77,6 +80,7 @@
     },
     "knight":{
         
+        "id":6,
         "name":"knight",
         "hp":3,
         "damage":4,
@@ -92,6 +96,7 @@
     },
     "orc":{
 
+        "id":7,
         "name":"orc",
         "hp":4,
         "damage":4,
@@ -107,6 +112,7 @@
     },
     "fire_golem":{
 
+        "id":8,
         "name":"fire_golem",
         "hp":5,
         "damage":7,
@@ -122,6 +128,7 @@
     },
     "water_golem":{
 
+        "id":9,
         "name":"water_golem",
         "hp":5,
         "damage":5,
@@ -137,6 +144,7 @@
     },
     "dragon":{
 
+        "id":10,
         "name":"dragon",
         "hp":12,
         "damage":8,

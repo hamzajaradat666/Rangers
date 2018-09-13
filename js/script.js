@@ -1,22 +1,7 @@
-import {
-    Mapper
-} from "./Mapper.js";
-
+import {Mapper} from "./Mapper.js";
 let fps = 30;
-let callOnce = true;
+let game = new Mapper();
+game.start();
+setInterval(function () {game.runtime()}, 1000 / fps)    
+    
 
-let map = new Mapper();
-
-
-setInterval(function () {
-    if (callOnce) {
-        map.start();
-        callOnce = false;
-    }
-    map.mapDrawer2D_vertical();
-}, 1000 / fps);
-let key = {
-
-    a: 65,
-    s: 83,
-}

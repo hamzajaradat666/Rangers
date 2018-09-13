@@ -1,4 +1,4 @@
-export function loadDoc(cb) {
+export function loadUnits(cb) {
   var xhttp = new XMLHttpRequest();
   
   xhttp.open("GET", "./json/unit.json", true);
