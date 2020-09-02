@@ -12,9 +12,9 @@
 
 //     function placeSoilder(unit) {
 
-//         if (hexhover(unit) && placeSoilderFlag.checked) {
+//         if (OnMouseHoverOverHex(unit) && placeSoilderFlag.checked) {
 
-//             if (hexClick(unit)) {
+//             if (OnMouseClickHex(unit)) {
 //                 if (!unit.isImpassable) {
 //                     console.log("Locked")
 //                     unit.isImpassable = true;

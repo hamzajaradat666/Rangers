@@ -1,6 +1,6 @@
-{  
+[
 
-    "peasent":{
+    {
         "id":1,
         "name":"peasent",
         "hp":1,
@@ -15,7 +15,7 @@
         "look":"./assets/peasent.png"
 
     },
-    "hawk":{
+    {
 
         "id":2,
         "name":"hawk",
@@ -31,7 +31,7 @@
         "look":"./assets/hawk.png"
 
     },
-    "Scout":{
+    {
         "id":3,
         "name":"scout",
         "hp":1,
@@ -46,7 +46,7 @@
         "look":"./assets/scout.png"
 
     },
-    "sword_fellow":{
+    {
 
         "id":4,
         "name":"sword_fellow",
@@ -62,8 +62,7 @@
         "look":"./assets/sword_fellow.png"
 
     },
-    "sword_man":{
-
+    {
         "id":5,
         "name":"sword_man",
         "hp":3,
@@ -78,8 +77,7 @@
         "look":"./assets/sword_man.png"
 
     },
-    "knight":{
-        
+    {
         "id":6,
         "name":"knight",
         "hp":3,
@@ -94,8 +92,7 @@
         "look":"./assets/knight.png"
 
     },
-    "orc":{
-
+    {
         "id":7,
         "name":"orc",
         "hp":4,
@@ -110,8 +107,7 @@
         "look":"./assets/orc.png"
 
     },
-    "fire_golem":{
-
+    {
         "id":8,
         "name":"fire_golem",
         "hp":5,
@@ -126,7 +122,7 @@
         "look":"./assets/fire_golem.png"
 
     },
-    "water_golem":{
+    {
 
         "id":9,
         "name":"water_golem",
@@ -142,7 +138,7 @@
         "look":"./assets/water_golem.png"
 
     },
-    "dragon":{
+    {
 
         "id":10,
         "name":"dragon",
@@ -160,4 +156,4 @@
     }
 
 
-    }
+]
