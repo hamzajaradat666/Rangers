@@ -2,8 +2,6 @@
 export class Unit {
 
     constructor() {
-
-
         console.log(" Unit Constructer");
         this.range = 20;
         this.pieces = [1];
@@ -14,9 +12,6 @@ export class Unit {
         this.isSelected = false;
         this.moveable = false;
         this.isPassable = false;
-
-
-
     }
 
 
