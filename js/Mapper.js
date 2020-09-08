@@ -2,11 +2,11 @@ import {loadUnits} from "./ajax.js";
 import {Card} from "./Card.js";
 var unitsData;
 var deck = [];
-let cellside = document.body.clientWidth / 100 * 2.5;
-let initPosX = 1;
-let initPosY = 1;
-let board_width = 1;
-let board_height = 1;
+let cellside = document.body.clientWidth / 100 * 2  ;
+let initPosX = Math.floor(parseInt(document.getElementById("initposX").value) / 2) * 2;
+let initPosY = Math.floor(parseInt(document.getElementById("initposY").value) / 2) * 2;
+let board_width = Math.floor(parseInt(document.getElementById("borderwidth").value) / 2) * 2;
+let board_height = parseInt(document.getElementById("borderheight").value);
 let closeX = 1.50;
 let closeY = 1.73;
 let canvas = document.getElementById("drawarea");
@@ -18,6 +18,7 @@ let renderSpeed = 0;
 let x = 1;
 let y = 19
 var time = 0
+let latestValue = parseFloat(document.getElementById("zoom").value)/10;
 
 document.getElementById("drawarea").setAttribute("width", canvasW);
 document.getElementById("drawarea").setAttribute("height", canvasH);
@@ -107,48 +108,6 @@ export class Mapper {
                 this.map[i][j].isOn = levelData[i][j];
             }
     }
-
-    /* mapDrawer(mapC) {
-        let c = {
-            r: 133,
-            g: 23,
-            b: 1,
-            a: 0.55
-        }
-        context.clearRect(0, 0, canvasW, canvasH);
-        for (let i = 0; i < mapC.length; i++) {
-            context.save();
-            context.strokeStyle = "rgba(100, 0, 50, 1)";
-            context.beginPath();
-            context.moveTo(mapC[i].x, mapC[i].y);
-            context.moveTo(mapC[i].x - mapC[i].cir_R, mapC[i].y)
-            context.lineTo(mapC[i].x - mapC[i].side / 2, mapC[i].y - mapC[i].in_r)
-            context.lineTo(mapC[i].x + mapC[i].side / 2, mapC[i].y - mapC[i].in_r)
-            context.lineTo(mapC[i].x + mapC[i].cir_R, mapC[i].y);
-            context.lineTo(mapC[i].x + mapC[i].side / 2, mapC[i].y + mapC[i].in_r)
-            context.lineTo(mapC[i].x - mapC[i].side / 2, mapC[i].y + mapC[i].in_r)
-            context.fillText(mapC[i].cellnum, mapC[i].x, mapC[i].y);
-            context.closePath();
-            context.stroke();
-            context.restore();
-            if (OnMouseHoverOverHex(mapC[i]) && OnMouseClickHex(mapC[i]) && mapC[i].isOn == false) {
-                mapC[i].isOn = true;
-                this.fillHex(mapC[i], c)
-            } else if (OnMouseHoverOverHex(mapC[i]) && mapC[i].isOn == true) {
-                this.strokeHex(mapC[i], c)
-                if (OnMouseClickHex(mapC[i])) {
-                    mapC[i].isOn = false;
-                    this.fillHex(mapC[i], c)
-                }
-            }
-            if (mapC[i].isOn == true || OnMouseHoverOverHex(mapC[i])) {
-                this.fillHex(mapC[i], c);
-            }
-        }
-        md = false;
-    } */
-
-
 
     mapDrawer2D_vertical() {
         context.clearRect(0, 0, canvasW, canvasH);
@@ -252,26 +211,22 @@ export class Mapper {
             renderSpeed = 0;
             x++;
             if (x > 29) {
-                /* y++ */
+                y++
                 x = 1;
             }
-           /*  if (y > 29) {
+            if (y > 29) {
                 x = 1;
                 y = 1
-            } */
+            }
         }
         renderSpeed++
         context.clearRect(0,0,canvasW,canvasH)
-        context.drawImage(image, drawBox * x, drawBox * y, 44, 44, 44, 44, 44, 44);
+        context.fillRect(0,0,canvasW,canvasH);
+        context.drawImage(image, drawBox * x, (drawBox-0.1) * y, 44, 44, canvasW/2-220, 144, 440, 440);
     }
 
      start() {
         return new Promise(async(resolve,reject)=>{
-            this.cellside = cellside;
-            this.width = Math.floor(parseInt(document.getElementById("borderwidth").value) / 2) * 2;
-            this.height = parseInt(document.getElementById("borderheight").value);
-            this.initPosX = Math.floor(parseInt(document.getElementById("initposX").value) / 2) * 2;
-            this.initPosY = Math.floor(parseInt(document.getElementById("initposY").value) / 2) * 2;
             let loading =  setInterval(() => {
                 this.loading()
             }, 1000/30);
@@ -280,8 +235,33 @@ export class Mapper {
                 unitsData.forEach(unit => deck.push(new Card(unit)))
             })
             this.map = this.make2D();
-                resolve(loading)
+                setTimeout(() => {
+                    resolve(loading)
+                }, 2000);
         })
+    }
+
+    reRender(){
+        let zoom = parseFloat(document.getElementById("zoom").value)/10;
+        this.map.forEach((row)=>{
+            row.forEach((col)=>{
+                if(zoom > latestValue){
+                    col.side *=zoom
+                    col.cir_R *=zoom
+                    col.in_r *=zoom;
+                    col.x*=zoom;
+                    col.y*=zoom;
+                }
+                if(zoom < latestValue){
+                    col.side /=latestValue
+                    col.cir_R /=latestValue
+                    col.in_r /=latestValue;
+                    col.x/=latestValue;
+                    col.y/=latestValue;
+                }
+            })
+        })
+        latestValue = zoom
     }
 
     runtime() {

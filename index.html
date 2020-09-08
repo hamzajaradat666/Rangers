@@ -18,8 +18,8 @@
     </div>
 
         <div class="props">
-            <label>Cell Size
-                <input id="cellsize1" type="text" value="35">
+            <label>Zoom
+                <input id="zoom" type="number" value="10" min="10" max="15">
             </label>
             <label>Border Width
                 <input id="borderheight" type="text" value="10">
@@ -41,7 +41,7 @@
                 <label>Place Soilder
                     <input id="soilder" name="type" type="radio">
                 </label>
-                <button class="gui-button" onclick="game.start()">Apply Settings</button>
+                <button id="applySettings" class="gui-button">Apply Settings</button>
                 <button class="gui-button" onclick="map0.check_console_log()">Check Console</button>
                 <button class="gui-button" onclick="move_can()">move can</button>
             </div>
