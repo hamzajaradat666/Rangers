@@ -5,7 +5,7 @@ export class Card{
     constructor(unit){
 
         this.x=100;
-        this.y=document.body.clientHeight-130
+        this.y=window.innerHeight - 300
         this.in_r;
         this.cir_r;
         this.unit=unit

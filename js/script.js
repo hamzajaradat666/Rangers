@@ -1,22 +1,13 @@
-import {Mapper} from "./Mapper.js";
-let fps = 30;
-let game = new Mapper();
-let gameInterval;
-document.getElementById('applySettings').addEventListener('click',ApplySettings)
-document.getElementById('zoom').addEventListener('input',ReRender)
-
-function ReRender(){
-    game.reRender()
+import {GameEngine} from "./GameEngine.js";
+let gameEngine = new GameEngine();
+gameEngine.start(gameEngine)
+document.getElementById('zoom').addEventListener('input',zoom)
+function zoom(){
+    gameEngine.zoom()
 }
-function ApplySettings() {
-    console.log("click");
-    clearInterval(gameInterval)
-    game.start().then((loadingInterval)=>{
-        clearInterval(loadingInterval)
-        gameInterval = setInterval(()=>{
-            game.runtime()
-        }, 1000 / fps)
-    });
-}
+window.onresize = function (event) {
+    canvas.setAttribute("width", screenWidth1)
+    canvas.setAttribute("height", screenHeight1)
+};
 
 
