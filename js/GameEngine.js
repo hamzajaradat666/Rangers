@@ -4,10 +4,11 @@ import {
 import {
     Card
 } from "./Card.js";
+
 let canvas = document.getElementById("drawarea");
 let context = canvas.getContext("2d");
-let screenWidth1 = window.innerWidth
-let screenHeight1 = window.innerHeight - 200
+let screenWidth1 = window.outerWidth
+let screenHeight1 = window.outerHeight - 200
 let screenWidth2 = document.body.innerWidth
 let screenHeight2 = document.body.innerHeight
 let canvasW = screenWidth1;
@@ -35,6 +36,43 @@ let fps = 60
 let fpsInterval;
 let now;
 let elapsed
+let startScreenMap = [{
+    title: "startButton",
+    dx: 328,
+    dy: 129,
+    get sx() {
+        return canvasW / 2 - this.dx / 2;
+    },
+    get sy() {
+        return canvasH / 2 + this.dy * 2;
+    },
+    get idle() {
+        let image = new Image()
+        image.src = "./assets/startButton.png";
+        return image
+    },
+    get clicked() {
+        let image = new Image()
+        image.src = "./assets/startButtonClicked.png";
+        return image
+    }
+}, {
+    title: "logo",
+    dx: 631,
+    dy: 501,
+    get sx() {
+        return canvasW / 2 - this.dx / 2;
+    },
+    get sy() {
+        return canvasH / 2 - this.dy / 2;
+    },
+    get idle() {
+        let image = new Image()
+        image.src = "./assets/logo.png";
+        return image
+    }
+}]
+
 export class GameEngine {
 
     constructor() {
@@ -74,6 +112,29 @@ export class GameEngine {
                 }
                 context.fillRect(0, 0, canvasW, canvasH);
                 context.drawImage(image, drawBox * x, (drawBox - 0.1) * y, 44, 44, canvasW - 220, canvasH - 220, 44, 44);
+            }
+            then = now - (elapsed % fpsInterval);
+
+        }
+        this.startScreen = () => {
+            this.startTrigger = requestAnimationFrame(this.startScreen)
+            now = Date.now();
+            elapsed = now - then;
+            if (elapsed > fpsInterval) {
+                context.clearRect(0, 0, canvasW, canvasH);
+                startScreenMap.forEach((ele) => {
+                    if (mouseDown(ele.sx, ele.sy, ele.dx, ele.dy)) {
+                        context.drawImage(ele.clicked, ele.sx, ele.sy, ele.dx, ele.dy);
+                        if(ele.title = "startButton"){
+                            context.clearRect(0, 0, canvasW, canvasH);
+                            this.render(this.gameScreen,fps)
+                            cancelAnimationFrame(this.startTrigger)
+                        }
+                    }
+                    else{
+                        context.drawImage(ele.idle, ele.sx, ele.sy, ele.dx, ele.dy);
+                    }
+                })
             }
             then = now - (elapsed % fpsInterval);
 
@@ -254,21 +315,17 @@ export class GameEngine {
 
     async start(self) {
         console.log(self);
-        this.render(this.loadingScreen, fps)
         canvas.setAttribute("width", screenWidth1)
         canvas.setAttribute("height", screenHeight1)
         canvas.style.cssText = `background-color:gray`;
         this.map = this.make2D();
         unitsData = await loadUnits()
         unitsData.forEach(unit => deck.push(new Card(unit)))
-        setTimeout(() => {
-            cancelAnimationFrame(this.loadingTrigger)
-        }, 1000);
-        this.render(this.gameScreen, fps)
+        this.render(this.startScreen, fps)
     }
 
     zoom() {
-        let zoom = parseFloat(document.getElementById("zoom").value) / 1000;
+        let zoom = (parseFloat(document.getElementById("zoom").value) + 1000) / 1000;
         console.log(zoom);
         this.map.forEach((row) => {
             row.forEach((col) => {
@@ -292,4 +349,3 @@ export class GameEngine {
     }
 
 }
-
