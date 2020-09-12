@@ -1,10 +1,8 @@
-import {
-    loadUnits
-} from "./ajax.js";
-import {
-    Card
-} from "./Card.js";
-
+import loadUnits from "./ajax.js";
+import Card from "./Card.js";
+import OptionsScreen from "./optionsScreen.js";
+import StartScreen from "./startScreen.js";
+console.log(StartScreen);
 let canvas = document.getElementById("drawarea");
 let context = canvas.getContext("2d");
 let screenWidth1 = window.outerWidth
@@ -36,43 +34,6 @@ let fps = 60
 let fpsInterval;
 let now;
 let elapsed
-let startScreenMap = [{
-    title: "startButton",
-    dx: 328,
-    dy: 129,
-    get sx() {
-        return canvasW / 2 - this.dx / 2;
-    },
-    get sy() {
-        return canvasH / 2 + this.dy * 2;
-    },
-    get idle() {
-        let image = new Image()
-        image.src = "./assets/startButton.png";
-        return image
-    },
-    get clicked() {
-        let image = new Image()
-        image.src = "./assets/startButtonClicked.png";
-        return image
-    }
-}, {
-    title: "logo",
-    dx: 631,
-    dy: 501,
-    get sx() {
-        return canvasW / 2 - this.dx / 2;
-    },
-    get sy() {
-        return canvasH / 2 - this.dy / 2;
-    },
-    get idle() {
-        let image = new Image()
-        image.src = "./assets/logo.png";
-        return image
-    }
-}]
-
 export class GameEngine {
 
     constructor() {
@@ -122,7 +83,7 @@ export class GameEngine {
             elapsed = now - then;
             if (elapsed > fpsInterval) {
                 context.clearRect(0, 0, canvasW, canvasH);
-                startScreenMap.forEach((ele) => {
+                StartScreen.forEach((ele) => {
                     if (mouseDown(ele.sx, ele.sy, ele.dx, ele.dy)) {
                         context.drawImage(ele.clicked, ele.sx, ele.sy, ele.dx, ele.dy);
                         if(ele.title = "startButton"){
@@ -134,6 +95,39 @@ export class GameEngine {
                     else{
                         context.drawImage(ele.idle, ele.sx, ele.sy, ele.dx, ele.dy);
                     }
+                })
+            }
+            then = now - (elapsed % fpsInterval);
+
+        }
+        this.optionsScreen = () => {
+            this.startTrigger = requestAnimationFrame(this.optionsScreen)
+            now = Date.now();
+            elapsed = now - then;
+            if (elapsed > fpsInterval) {
+                context.clearRect(0, 0, canvasW, canvasH);
+                context.font='24px sans-serif';
+                OptionsScreen.forEach((option,i) => {
+                    option.forEach((box,j) => {
+                    let marginX=box.sx*i;
+                    let marginY=box.sy*j;
+                    context.strokeRect(marginX, marginY, box.dx, box.dy)
+                    box.optionData.forEach(data=>{
+                        let posX = data.sx + marginX;
+                        let posY = data.sy + marginY
+                        context.strokeStyle=data.fillStyle;
+                        if(data.type.includes("text")){
+                            context.fillText(data.title, posX, posY, 1002);
+                        }
+                        context.strokeRect(posX, posY, data.dx, data.dy)
+                        if (mouseDown(posX, posY, data.dx, data.dy)){
+                        context.strokeRect(posX, posY, data.dx, data.dy)
+                            console.log("ji");
+                        }
+                    })
+                    if(j<=option.length)
+                    j++
+                })
                 })
             }
             then = now - (elapsed % fpsInterval);
@@ -321,7 +315,7 @@ export class GameEngine {
         this.map = this.make2D();
         unitsData = await loadUnits()
         unitsData.forEach(unit => deck.push(new Card(unit)))
-        this.render(this.startScreen, fps)
+        this.render(this.optionsScreen  , fps)
     }
 
     zoom() {

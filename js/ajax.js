@@ -1,4 +1,4 @@
-export let loadUnits = () => {
+ let loadUnits = () => {
   return new Promise((resolve, reject) => {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "./json/unit.json", true);
@@ -10,3 +10,4 @@ export let loadUnits = () => {
     };
   })
 }
+export default loadUnits

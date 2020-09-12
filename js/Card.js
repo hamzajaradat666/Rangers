@@ -1,6 +1,5 @@
 
-
-export class Card{
+let Card = class Card{
 
     constructor(unit){
 
@@ -17,3 +16,4 @@ export class Card{
 
 
 }
+export default Card
