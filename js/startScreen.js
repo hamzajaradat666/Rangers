@@ -23,7 +23,7 @@ let canvasH = screenHeight1;
         return image
     }
 }, {
-    title: "logo",
+    title: "optionsButton",
     dx: 631,
     dy: 501,
     get sx() {
@@ -33,6 +33,11 @@ let canvasH = screenHeight1;
         return canvasH / 2 - this.dy / 2;
     },
     get idle() {
+        let image = new Image()
+        image.src = "./assets/logo.png";
+        return image
+    },
+    get clicked() {
         let image = new Image()
         image.src = "./assets/logo.png";
         return image

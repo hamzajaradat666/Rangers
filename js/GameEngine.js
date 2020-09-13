@@ -34,103 +34,147 @@ let fps = 60
 let fpsInterval;
 let now;
 let elapsed
+let currentRenderScreen = "startScreen";
+let OnLoadingData = false;
+
 export class GameEngine {
 
     constructor() {
+        this.prepareMapAndCards = async () => {
+            this.map = this.make2D();
+            unitsData = await loadUnits()
+            unitsData.forEach(unit => deck.push(new Card(unit)))
+            OnLoadingData=false
+            setTimeout(() => {
+                currentRenderScreen="gameScreen"
+            }, 100);
+        }
         this.render = (renderScreen, fps) => {
-            fpsInterval = 1000 / fps;
             then = Date.now();
             renderScreen()
         }
         this.gameScreen = () => {
+            fpsInterval = 1000 / fps;
             this.gameTrigger = requestAnimationFrame(this.gameScreen)
             now = Date.now();
             elapsed = now - then;
             if (elapsed > fpsInterval) {
                 context.clearRect(0, 0, canvasW, canvasH);
-                this.mapDrawer2DVertical()
-                this.cardsDrawer()
+                switch (currentRenderScreen) {
+                    case "gameScreen":
+                        if(OnLoadingData){
+                            currentRenderScreen="loadingScreen"
+                            this.prepareMapAndCards()
+                        }
+                        this.mapDrawer2DVertical()
+                        this.cardsDrawer()
+                        break;
+                    case "startScreen":
+                        this.startScreen()
+                        break;
+                    case "loadingScreen":
+                        this.loadingScreen()
+                        break;
+                    case "optionsScreen":
+                        this.optionsScreen()
+                        break;
+
+                    default:
+                        break;
+                }
+
             }
             then = now - (elapsed % fpsInterval)
         }
         this.loadingScreen = () => {
-            this.loadingTrigger = requestAnimationFrame(this.loadingScreen)
-            now = Date.now();
-            elapsed = now - then;
-            if (elapsed > fpsInterval) {
-                let width = 1280
-                let drawBox = width / 30
-                let image = new Image()
-                image.src = "/assets/loading.png"
-                x++;
-                if (x > 29) {
-                    y++
-                    x = 1;
-                }
-                if (y > 29) {
-                    x = 1;
-                    y = 1
-                }
-                context.fillRect(0, 0, canvasW, canvasH);
-                context.drawImage(image, drawBox * x, (drawBox - 0.1) * y, 44, 44, canvasW - 220, canvasH - 220, 44, 44);
+            let width = 1280
+            let drawBox = width / 30
+            let image = new Image()
+            image.src = "/assets/loading.png"
+            x++;
+            if (x > 29) {
+                y++
+                x = 1;
             }
-            then = now - (elapsed % fpsInterval);
-
+            if (y > 29) {
+                x = 1;
+                y = 1
+            }
+            context.fillRect(0, 0, canvasW, canvasH);
+            context.drawImage(image, drawBox * x, (drawBox - 0.1) * y, 44, 44, canvasW - 220, canvasH - 220, 44, 44);
         }
         this.startScreen = () => {
-            this.startTrigger = requestAnimationFrame(this.startScreen)
-            now = Date.now();
-            elapsed = now - then;
-            if (elapsed > fpsInterval) {
-                context.clearRect(0, 0, canvasW, canvasH);
-                StartScreen.forEach((ele) => {
-                    if (mouseDown(ele.sx, ele.sy, ele.dx, ele.dy)) {
-                        context.drawImage(ele.clicked, ele.sx, ele.sy, ele.dx, ele.dy);
-                        if(ele.title = "startButton"){
-                            context.clearRect(0, 0, canvasW, canvasH);
-                            this.render(this.gameScreen,fps)
-                            cancelAnimationFrame(this.startTrigger)
-                        }
+            context.clearRect(0, 0, canvasW, canvasH);
+            StartScreen.forEach((ele) => {
+                if (mouseDown(ele.sx, ele.sy, ele.dx, ele.dy)) {
+                    context.drawImage(ele.clicked, ele.sx, ele.sy, ele.dx, ele.dy);
+                    switch (ele.title) {
+                        case "startButton":
+                            OnLoadingData = true
+                            currentRenderScreen = "gameScreen"
+                            break;
+
+                        case "optionsButton":
+                            currentRenderScreen = "optionsScreen"
+                            break;
                     }
-                    else{
-                        context.drawImage(ele.idle, ele.sx, ele.sy, ele.dx, ele.dy);
-                    }
-                })
-            }
-            then = now - (elapsed % fpsInterval);
+                } else {
+                    context.drawImage(ele.idle, ele.sx, ele.sy, ele.dx, ele.dy);
+                }
+            })
 
         }
         this.optionsScreen = () => {
-            this.startTrigger = requestAnimationFrame(this.optionsScreen)
-            now = Date.now();
-            elapsed = now - then;
-            if (elapsed > fpsInterval) {
-                context.clearRect(0, 0, canvasW, canvasH);
-                context.font='24px sans-serif';
-                OptionsScreen.forEach((option,i) => {
-                    option.forEach((box,j) => {
-                    let marginX=box.sx*i;
-                    let marginY=box.sy*j;
+            let marginBetween = 2
+            let marginFromBox = 20
+            let optionsCenterBox = {
+                sx: canvasW / 10,
+                sy: canvasH / 10,
+                dx: canvasW / 1.3,
+                dy: canvasH / 1.3,
+            }
+            let backButton = {
+                sx: canvasW / 1.3 * 1.13,
+                sy: canvasH / 1.3 * 1.13,
+                dx: 200,
+                dy: 100,
+            }
+            context.save();
+            context.strokeStyle = "red"
+            context.clearRect(0, 0, canvasW, canvasH);
+            context.strokeRect(optionsCenterBox.sx, optionsCenterBox.sy, optionsCenterBox.dx, optionsCenterBox.dy)
+            context.strokeRect(backButton.sx, backButton.sy, backButton.dx, backButton.dy)
+            context.restore();
+            context.fillText("Settings", canvasW / 2 - 100, 50);
+
+            context.font = '24px sans-serif';
+            OptionsScreen.forEach((option, i) => {
+                option.forEach((box, j) => {
+                    let marginX = box.sx * j * marginBetween + optionsCenterBox.sx + marginFromBox;
+                    let marginY = box.sy * i * marginBetween + optionsCenterBox.sy + marginFromBox;
                     context.strokeRect(marginX, marginY, box.dx, box.dy)
-                    box.optionData.forEach(data=>{
+                    box.optionData.forEach(data => {
                         let posX = data.sx + marginX;
-                        let posY = data.sy + marginY
-                        context.strokeStyle=data.fillStyle;
-                        if(data.type.includes("text")){
-                            context.fillText(data.title, posX, posY, 1002);
+                        let posY = data.sy + marginY;
+                        context.strokeStyle = data.fillStyle;
+                        if (data.type.includes("text")) {
+                            context.fillText(data.title, posX, posY, 100);
+
                         }
                         context.strokeRect(posX, posY, data.dx, data.dy)
-                        if (mouseDown(posX, posY, data.dx, data.dy)){
-                        context.strokeRect(posX, posY, data.dx, data.dy)
+                        if (mouseDown(posX, posY, data.dx, data.dy)) {
+                            context.strokeRect(posX, posY, data.dx, data.dy)
                             console.log("ji");
                         }
+                        if (mouseDown(backButton.sx, backButton.sy, backButton.dx, backButton.dy)) {
+                            currentRenderScreen = "startScreen"
+                        }
+
                     })
-                    if(j<=option.length)
-                    j++
+                    if (j <= option.length)
+                        j++
                 })
-                })
-            }
-            then = now - (elapsed % fpsInterval);
+            })
 
         }
         this.mapDrawer2DVertical = () => {
@@ -164,12 +208,6 @@ export class GameEngine {
                         }
                     }
                     if (tile.isOn == true || OnMouseHoverOverHex(tile)) {
-                        let c = {
-                            r: 233,
-                            g: 213,
-                            b: 122,
-                            a: 0
-                        }
                         this.strokeHex(tile)
                         this.drawImage(tile);
                     }
@@ -253,7 +291,7 @@ export class GameEngine {
         }
 
         this.hex.cellnum = 1;
-        console.log(map)
+        /* console.log(map) */
         return map;
     }
 
@@ -312,10 +350,8 @@ export class GameEngine {
         canvas.setAttribute("width", screenWidth1)
         canvas.setAttribute("height", screenHeight1)
         canvas.style.cssText = `background-color:gray`;
-        this.map = this.make2D();
-        unitsData = await loadUnits()
-        unitsData.forEach(unit => deck.push(new Card(unit)))
-        this.render(this.optionsScreen  , fps)
+        
+        this.render(this.gameScreen, fps)
     }
 
     zoom() {
