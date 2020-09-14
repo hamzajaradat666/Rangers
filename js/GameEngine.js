@@ -44,9 +44,9 @@ export class GameEngine {
             this.map = this.make2D();
             unitsData = await loadUnits()
             unitsData.forEach(unit => deck.push(new Card(unit)))
-            OnLoadingData=false
+            OnLoadingData = false
             setTimeout(() => {
-                currentRenderScreen="gameScreen"
+                currentRenderScreen = "gameScreen"
             }, 100);
         }
         this.render = (renderScreen, fps) => {
@@ -62,12 +62,12 @@ export class GameEngine {
                 context.clearRect(0, 0, canvasW, canvasH);
                 switch (currentRenderScreen) {
                     case "gameScreen":
-                        if(OnLoadingData){
-                            currentRenderScreen="loadingScreen"
+                        if (OnLoadingData) {
+                            currentRenderScreen = "loadingScreen"
                             this.prepareMapAndCards()
                         }
                         this.mapDrawer2DVertical()
-                        this.cardsDrawer()
+                        /* this.cardsDrawer() */
                         break;
                     case "startScreen":
                         this.startScreen()
@@ -106,7 +106,7 @@ export class GameEngine {
         this.startScreen = () => {
             context.clearRect(0, 0, canvasW, canvasH);
             StartScreen.forEach((ele) => {
-                if (mouseDown(ele.sx, ele.sy, ele.dx, ele.dy)) {
+                if (OnMouseDownInBox(ele.sx, ele.sy, ele.dx, ele.dy)) {
                     context.drawImage(ele.clicked, ele.sx, ele.sy, ele.dx, ele.dy);
                     switch (ele.title) {
                         case "startButton":
@@ -124,6 +124,30 @@ export class GameEngine {
             })
 
         }
+        this.zoomValue = 1
+        this.onZoom = () => {
+            let zoom = (this.zoomValue + 1000) / 1000;
+            console.log(zoom);
+            this.map.forEach((row) => {
+                row.forEach((col) => {
+                    if (zoom > latestValue) {
+                        col.side *= zoom
+                        col.cir_R *= zoom
+                        col.in_r *= zoom;
+                        col.x *= zoom;
+                        col.y *= zoom;
+                    }
+                    if (zoom < latestValue) {
+                        col.side /= latestValue
+                        col.cir_R /= latestValue
+                        col.in_r /= latestValue;
+                        col.x /= latestValue;
+                        col.y /= latestValue;
+                    }
+                })
+            })
+            latestValue = zoom
+        }
         this.optionsScreen = () => {
             let marginBetween = 2
             let marginFromBox = 20
@@ -140,34 +164,45 @@ export class GameEngine {
                 dy: 100,
             }
             context.save();
+            context.font = '24px sans-serif';
             context.strokeStyle = "red"
             context.clearRect(0, 0, canvasW, canvasH);
             context.strokeRect(optionsCenterBox.sx, optionsCenterBox.sy, optionsCenterBox.dx, optionsCenterBox.dy)
             context.strokeRect(backButton.sx, backButton.sy, backButton.dx, backButton.dy)
-            context.restore();
             context.fillText("Settings", canvasW / 2 - 100, 50);
-
-            context.font = '24px sans-serif';
+            context.restore();
             OptionsScreen.forEach((option, i) => {
-                option.forEach((box, j) => {
-                    let marginX = box.sx * j * marginBetween + optionsCenterBox.sx + marginFromBox;
-                    let marginY = box.sy * i * marginBetween + optionsCenterBox.sy + marginFromBox;
-                    context.strokeRect(marginX, marginY, box.dx, box.dy)
-                    box.optionData.forEach(data => {
+                option.forEach((optionBox, j) => {
+                    let marginX = optionBox.sx * j * marginBetween + optionsCenterBox.sx + marginFromBox;
+                    let marginY = optionBox.sy * i * marginBetween + optionsCenterBox.sy + marginFromBox;
+                    context.save();
+                    context.strokeRect(marginX, marginY, optionBox.dx, optionBox.dy)
+                    context.restore();
+                    optionBox.optionData.forEach(data => {
                         let posX = data.sx + marginX;
                         let posY = data.sy + marginY;
+                        context.save();
                         context.strokeStyle = data.fillStyle;
+                        context.restore();
                         if (data.type.includes("text")) {
                             context.fillText(data.title, posX, posY, 100);
+                            context.fillText(this.zoomValue, posX+100, posY+50, 100);
 
                         }
                         context.strokeRect(posX, posY, data.dx, data.dy)
-                        if (mouseDown(posX, posY, data.dx, data.dy)) {
+                        if (OnMouseDownInBox(posX, posY, data.dx, data.dy)) {
                             context.strokeRect(posX, posY, data.dx, data.dy)
-                            console.log("ji");
+                            if (data.title.includes("zoomin") && this.zoomValue<25) {
+                                this.zoomValue++
+                                this.onZoom()
+                            }
+                            if (data.title.includes("zoomout") && !this.zoomValue<1) {
+                                this.zoomValue--
+                                this.onZoom()
+                            }
                         }
-                        if (mouseDown(backButton.sx, backButton.sy, backButton.dx, backButton.dy)) {
-                            currentRenderScreen = "startScreen"
+                        if (OnMouseDownInBox(backButton.sx, backButton.sy, backButton.dx, backButton.dy)) {
+                            currentRenderScreen = "gameScreen"
                         }
 
                     })
@@ -197,12 +232,16 @@ export class GameEngine {
                     context.font = "8px Arial";
                     context.fillText(i + "-" + j, tile.x, tile.y);
                     context.restore();
-                    if (OnMouseHoverOverHex(tile) && OnMouseClickHex(tile) && tile.isOn == false) {
+                    context.fillRect(0,0,10,10);
+                    if(OnMouseDownInBox(0,0,10,10)){
+                        currentRenderScreen = "optionsScreen"
+                    }
+                    if (OnMouseHoverOverHex(tile) && OnMouseClickHex() && tile.isOn == false) {
                         tile.isOn = true;
                         this.strokeHex(tile)
                     } else if (OnMouseHoverOverHex(tile) && tile.isOn == true) {
                         this.strokeHex(tile)
-                        if (OnMouseClickHex(tile)) {
+                        if (OnMouseClickHex()) {
                             tile.isOn = false;
                             this.strokeHex(tile)
                         }
@@ -216,9 +255,13 @@ export class GameEngine {
             md = false;
         }
         this.cardsDrawer = () => {
-            let scale = 120
+            let scale = 100
             deck.forEach((card, i) => {
                 context.drawImage(card.look, card.x * i, card.y, scale, scale)
+                if(OnMouseHoverOverHex({x:card.x* i,y:card.y,in_r:card.in_r})){
+                    context.clearRect(card.x * i, card.y, scale, scale)
+                    context.strokeRect(card.x * i, card.y, scale*1.1, scale*1.1)
+                }
             })
         }
         this.width = boardWidthValue;
@@ -350,7 +393,7 @@ export class GameEngine {
         canvas.setAttribute("width", screenWidth1)
         canvas.setAttribute("height", screenHeight1)
         canvas.style.cssText = `background-color:gray`;
-        
+
         this.render(this.gameScreen, fps)
     }
 

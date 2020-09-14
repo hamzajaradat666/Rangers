@@ -17,15 +17,12 @@ document.addEventListener('mouseup',function(e){
 
 document.addEventListener('mousemove', function (e) {
 
-
-
     mx = e.offsetX;
     my = e.offsetY;
 
 }, false);
 
-function mouseDown(x, y, width, height) {
-
+function OnMouseDownInBox(x, y, width, height) {
 
     if (mx >= x     &&     mx <= x + width       &&      my >= y       &&       my <= y + height       &&      md)
         return true;
@@ -68,7 +65,6 @@ function circleCollision(circle1,circle2){
 
 //----------------------------------------------------------------------------------------
 function OnMouseHoverOverHex(hex){
-
     var dx = hex.x - mx;
     var dy = hex.y - my;
 
@@ -81,9 +77,10 @@ function OnMouseHoverOverHex(hex){
 
     }
 
-function OnMouseClickHex(hex){
+function OnMouseClickHex(){
 
    if(md==true){
+       console.log("OnMouseDownInBox");
        return true;
    }
 

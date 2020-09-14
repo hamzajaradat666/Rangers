@@ -28,6 +28,7 @@ let OptionsScreen = [
             }, {
                 type: "button",
                 title: "zoomValue",
+                value:1,
                 dx: 200,
                 dy: 50,
                 sx: 35,
