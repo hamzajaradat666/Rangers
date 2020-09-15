@@ -3,8 +3,8 @@ let canvasH = window.outerHeight - 200
 let optionProps = {
     dx: 270,
     dy: 110,
-    sx: 270,
-    sy: 110,
+    sx: 0,
+    sy: 0,
 }
 let OptionsScreen = [
     [{

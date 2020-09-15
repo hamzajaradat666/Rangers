@@ -17,10 +17,10 @@ prepareBrowser().then(()=>{
     gameEngine.start(gameEngine)
 })
 
-document.getElementById('zoom').addEventListener('input', zoom)
+/* document.getElementById('zoom').addEventListener('input', zoom)
 function zoom() {
     gameEngine.zoom()
-}
+} */
 
 
 window.onresize = function (event) {

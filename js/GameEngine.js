@@ -6,29 +6,33 @@ console.log(StartScreen);
 let canvas = document.getElementById("drawarea");
 let context = canvas.getContext("2d");
 let screenWidth1 = window.outerWidth
-let screenHeight1 = window.outerHeight - 200
+let screenHeight1 = window.outerHeight
 let screenWidth2 = document.body.innerWidth
 let screenHeight2 = document.body.innerHeight
 let canvasW = screenWidth1;
 let canvasH = screenHeight1;
 document.getElementById("drawarea").setAttribute("width", canvasW);
 document.getElementById("drawarea").setAttribute("height", canvasH);
-let initPosX = document.getElementById("initposX")
+/* let initPosX = document.getElementById("initposX")
 let initPosY = document.getElementById("initposY")
 let boardWidth = document.getElementById("borderwidth")
-let boardHeight = document.getElementById("borderheight")
+let boardHeight = document.getElementById("borderheight") */
+ let initPosX = 2
+ let initPosY = 0
+ let boardWidth = 5
+ let boardHeight = 8
 let unitsData;
 let deck = [];
 let cellside = screenWidth1 / 100 * 2;
-let initPosXValue = Math.floor(parseInt(initPosX.value) / 2) * 2;
-let initPosYValue = Math.floor(parseInt(initPosY.value) / 2) * 2;
-let boardWidthValue = Math.floor(parseInt(boardWidth.value) / 2) * 2;
-let boardHeightValue = Math.floor(parseInt(boardHeight.value))
+let initPosXValue = Math.floor(parseInt(initPosX) / 2) * 2;
+let initPosYValue = Math.floor(parseInt(initPosY) / 2) * 2;
+let boardWidthValue = Math.floor(parseInt(boardWidth) / 2) * 2;
+let boardHeightValue = Math.floor(parseInt(boardHeight))
 let closeX = 1.50;
 let closeY = 1.73;
 let x = 1;
 let y = 19
-let latestValue = parseFloat(document.getElementById("zoom").value) / 10;
+let latestValue
 let then;
 let fps = 60
 let fpsInterval;
@@ -67,6 +71,7 @@ export class GameEngine {
                             this.prepareMapAndCards()
                         }
                         this.mapDrawer2DVertical()
+                        this.gameBar()
                         /* this.cardsDrawer() */
                         break;
                     case "startScreen":
@@ -103,11 +108,25 @@ export class GameEngine {
             context.fillRect(0, 0, canvasW, canvasH);
             context.drawImage(image, drawBox * x, (drawBox - 0.1) * y, 44, 44, canvasW - 220, canvasH - 220, 44, 44);
         }
+        this.gameBar = () => {
+            
+            if(OnMouseDownInBox(0, canvasH-100, canvasW, 100)){
+                context.save();
+                context.fillStyle = "red"
+                context.fillRect(0, canvasH-100, canvasW, 100);
+                context.restore()
+            }
+            else{
+                context.fillRect(0, canvasH-100, canvasW, 100);
+            }
+
+        }
         this.startScreen = () => {
             context.clearRect(0, 0, canvasW, canvasH);
             StartScreen.forEach((ele) => {
                 if (OnMouseDownInBox(ele.sx, ele.sy, ele.dx, ele.dy)) {
                     context.drawImage(ele.clicked, ele.sx, ele.sy, ele.dx, ele.dy);
+                    if(OnMouseClick())
                     switch (ele.title) {
                         case "startButton":
                             OnLoadingData = true
@@ -190,7 +209,8 @@ export class GameEngine {
 
                         }
                         context.strokeRect(posX, posY, data.dx, data.dy)
-                        if (OnMouseDownInBox(posX, posY, data.dx, data.dy)) {
+                        if (OnMouseDownInBox(posX, posY, data.dx, data.dy))
+                        if(OnMouseClick()){
                             context.strokeRect(posX, posY, data.dx, data.dy)
                             if (data.title.includes("zoomin") && this.zoomValue<25) {
                                 this.zoomValue++
@@ -228,20 +248,20 @@ export class GameEngine {
                     context.lineTo(tile.x - tile.side / 2, tile.y + tile.in_r)
                     context.closePath();
                     context.fill();
-                    context.fillStyle = "black"
+                    context.fillStyle = "red"
                     context.font = "8px Arial";
-                    context.fillText(i + "-" + j, tile.x, tile.y);
+                    context.fillText(i + " - " + j, tile.x, tile.y);
                     context.restore();
                     context.fillRect(0,0,10,10);
                     if(OnMouseDownInBox(0,0,10,10)){
                         currentRenderScreen = "optionsScreen"
                     }
-                    if (OnMouseHoverOverHex(tile) && OnMouseClickHex() && tile.isOn == false) {
+                    if (OnMouseHoverOverHex(tile) && OnMousePressed() && tile.isOn == false) {
                         tile.isOn = true;
                         this.strokeHex(tile)
                     } else if (OnMouseHoverOverHex(tile) && tile.isOn == true) {
                         this.strokeHex(tile)
-                        if (OnMouseClickHex()) {
+                        if (OnMousePressed()) {
                             tile.isOn = false;
                             this.strokeHex(tile)
                         }
@@ -252,7 +272,7 @@ export class GameEngine {
                     }
                 })
             })
-            md = false;
+            
         }
         this.cardsDrawer = () => {
             let scale = 100
@@ -392,8 +412,6 @@ export class GameEngine {
         console.log(self);
         canvas.setAttribute("width", screenWidth1)
         canvas.setAttribute("height", screenHeight1)
-        canvas.style.cssText = `background-color:gray`;
-
         this.render(this.gameScreen, fps)
     }
 

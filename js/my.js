@@ -14,7 +14,7 @@
 
 //         if (OnMouseHoverOverHex(unit) && placeSoilderFlag.checked) {
 
-//             if (OnMouseClickHex(unit)) {
+//             if (OnMousePressed(unit)) {
 //                 if (!unit.isImpassable) {
 //                     console.log("Locked")
 //                     unit.isImpassable = true;

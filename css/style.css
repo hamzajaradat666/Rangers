@@ -1,6 +1,5 @@
 body{
-    background-color: #000;
-    overflow: hidden;
+    background-color: rgb(129, 129, 129);
     display: flex;
     flex-direction: column;
     width: 100%;
