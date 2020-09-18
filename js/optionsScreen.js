@@ -1,5 +1,5 @@
-let canvasW = window.outerWidth
-let canvasH = window.outerHeight - 200
+let canvasW = CONFIGURATIONS.canvasW;
+let canvasH = CONFIGURATIONS.canvasH;
 let optionProps = {
     dx: 270,
     dy: 110,

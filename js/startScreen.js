@@ -1,11 +1,9 @@
-let screenWidth1 = window.outerWidth
-let screenHeight1 = window.outerHeight - 200
-let canvasW = screenWidth1;
-let canvasH = screenHeight1;
+let canvasW = CONFIGURATIONS.canvasW;
+let canvasH = CONFIGURATIONS.canvasH;
  let StartScreen = [{
     title: "startButton",
-    dx: 328,
-    dy: 129,
+    dx: 328/2,
+    dy: 129/2,
     get sx() {
         return canvasW / 2 - this.dx / 2;
     },
@@ -24,8 +22,8 @@ let canvasH = screenHeight1;
     }
 }, {
     title: "optionsButton",
-    dx: 631,
-    dy: 501,
+    dx: 631/2,
+    dy: 501/2,
     get sx() {
         return canvasW / 2 - this.dx / 2;
     },
