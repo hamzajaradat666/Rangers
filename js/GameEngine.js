@@ -2,6 +2,7 @@ import loadUnits from "./ajax.js";
 import Card from "./Card.js";
 import GameBar from "./gameBar.js";
 import OptionsScreen from "./optionsScreen.js";
+import Player from "./Player.js";
 import StartScreen from "./startScreen.js";
 let canvas = document.getElementById("drawarea");
 let context = canvas.getContext("2d");
@@ -12,14 +13,12 @@ document.getElementById("drawarea").setAttribute("height", canvasH);
 let cellside = canvasW / 50;
 let initPosX = canvasW / 200
 let initPosY = 0
-let boardWidth = 5
-let boardHeight = 8
+let boardWidth = 8
+let boardHeight = 16
 let initPosXValue = Math.floor(initPosX);
 let initPosYValue = Math.floor(initPosY);
 let boardWidthValue = Math.floor(boardWidth / 2) * 2;
 let boardHeightValue = Math.floor(boardHeight)
-let unitsData;
-let deck = [];
 let x = 1;
 let y = 19;
 let latestValue;
@@ -35,14 +34,8 @@ export class GameEngine {
 
     constructor() {
 
-        this.prepareMapAndCards = async () => {
+        this.prepareMap = async () => {
             this.map = this.make2D();
-            unitsData = await loadUnits()
-            unitsData.forEach((unit, i) => {
-                let card = new Card(unit)
-                card.x = card.x * i * 1.4
-                deck.push(card)
-            })
             OnLoadingData = false
             setTimeout(() => {
                 currentRenderScreen = "gameScreen"
@@ -63,7 +56,7 @@ export class GameEngine {
                     case "gameScreen":
                         if (OnLoadingData) {
                             currentRenderScreen = "loadingScreen"
-                            this.prepareMapAndCards()
+                            this.prepareMap()
                         }
                         this.mapDrawer2DVertical()
                         this.gameBar()
@@ -106,33 +99,79 @@ export class GameEngine {
         this.gameBar = () => {
             GameBar.forEach((gameBarBody) => {
                 gameBarBody.gameBarSections.forEach((sections) => {
-                    if (OnMouseDownInBox(sections.sx, sections.sy, sections.dx, sections.dy)) {
-                        context.save();
-                        context.strokeStyle = "blue"
-                        context.strokeRect(sections.sx, sections.sy, sections.dx, sections.dy);
-                        context.restore()
-                        switch (sections.title) {
-                            case "status":
-                                sections.subSections.forEach(sub=>{
-                                    context.fillStyle='black';
+                    sections.subSections.forEach(sub => {
+                        if (OnMouseDownInBox(sections.sx, sections.sy, sections.dx, sections.dy)) {
+                            context.save();
+                            context.strokeStyle = "blue"
+                            context.strokeRect(sections.sx, sections.sy, sections.dx, sections.dy);
+                            context.restore()
+                            switch (sections.title) {
+                                case "status":
+                                    context.fillStyle = 'black';
                                     context.fillText(sub.title, sub.sx, sub.sy);
-                                })
-                                break;
-                        }
-                    } else {
-                        context.save();
-                        context.strokeStyle = "red"
-                        context.strokeRect(sections.sx, sections.sy, sections.dx, sections.dy);
-                        context.restore()
-                        switch (sections.title) {
-                            case "status":
-                                sections.subSections.forEach(sub=>{
-                                    context.fillStyle='black';
+                                    switch (sub.title) {
+                                        case "playerHP":
+                                            context.fillText(this.players[this.gameStatus.playerTurn - 1].hp, sub.valueSx, sub.valueSy);
+                                            break;
+                                        case "playerName":
+                                            context.fillText(this.players[this.gameStatus.playerTurn - 1].name, sub.valueSx, sub.valueSy);
+                                            break;
+                                        case "playerTurn":
+                                            context.fillText(this.players[this.gameStatus.playerTurn - 1].id, sub.valueSx, sub.valueSy);
+                                            break;
+                                    }
+                                    break;
+                                case "cards":
+                                    context.strokeRect(sub.sx, sub.sy, sub.dx*2, sub.dy);
+                                    context.font=`10px sans-serif`;
+                                    context.fillText(sub.title, sub.sx, sub.sy+sub.margin);
+                                    break;
+                                case "deck":
                                     context.fillText(sub.title, sub.sx, sub.sy);
-                                })
-                                break;
+                                    context.strokeRect(sub.sx, sub.sy, sub.dx, sub.dy);
+                                    if (OnMouseDownInBox(sub.sx, sub.sy, sub.dx, sub.dy)) {
+                                        if (this.gameStatus.playerTurn == 1)
+                                            this.gameStatus.playerTurn = 2
+                                        else this.gameStatus.playerTurn = 1
+                                    }
+                                    break;
+                            }
+                        } else {
+                            context.save();
+                            context.strokeStyle = "red"
+                            context.strokeRect(sections.sx, sections.sy, sections.dx, sections.dy);
+                            context.restore()
+                            context.save();
+                            context.globalAlpha = 0.1;
+                            context.fillRect(sections.sx, sections.sy, sections.dx, sections.dy);
+                            context.restore();
+                            switch (sections.title) {
+                                case "status":
+                                    context.fillStyle = 'black';
+                                    context.fillText(sub.title, sub.sx, sub.sy);
+                                    switch (sub.title) {
+                                        case "playerHP":
+                                            context.fillText(this.players[this.gameStatus.playerTurn - 1].hp, sub.valueSx, sub.valueSy);
+                                            break;
+                                        case "playerName":
+                                            context.fillText(this.players[this.gameStatus.playerTurn - 1].name, sub.valueSx, sub.valueSy);
+                                            break;
+                                        case "playerTurn":
+                                            context.fillText(this.players[this.gameStatus.playerTurn - 1].id, sub.valueSx, sub.valueSy);
+                                            break;
+                                    }
+                                    break;
+                                case "cards":
+                                    context.strokeRect(sub.sx, sub.sy, sub.dx, sub.dy);
+                                    context.fillText(sub.title, sub.sx, sub.sy);
+                                    break;
+                                case "deck":
+                                    context.strokeRect(sub.sx, sub.sy, sub.dx, sub.dy);
+                                    context.fillText(sub.title, sub.sx, sub.sy);
+                                    break;
+                            }
                         }
-                    }
+                    })
                 })
             })
         }
@@ -315,18 +354,34 @@ export class GameEngine {
         this.closeY = 1.73;
         this.map;
         this.mapTile = {
-            x: this.cellside,
-            y: this.cellside,
-            cir_R: this.cellside,
-            in_r: this.r,
-            side: this.cellside,
-            cellnum: 1,
-            isOccupied: false,
-            state: {}
-        }
+                x: this.cellside,
+                y: this.cellside,
+                cir_R: this.cellside,
+                in_r: this.r,
+                side: this.cellside,
+                cellnum: 1,
+                isOccupied: false,
+                state: {}
+            },
+            this.deckData = [],
+            this.players = [],
+            this.gameStatus = {
+                playerTurn: 1,
+                phase: 1,
+            }
+
 
     }
-
+    async deckGenerator() {
+        let deck = [];
+        let unitsData = await loadUnits()
+        unitsData.forEach((unit, i) => {
+            let card = new Card(unit)
+            card.x = card.x * i * 1.4
+            deck.push(card)
+        })
+        return deck
+    }
     make() {
         this.start();
         let map = [];
@@ -422,13 +477,29 @@ export class GameEngine {
     }
 
     drawImage(cell) {
-        context.drawImage(deck[6].look, cell.x - cell.side, cell.y - cell.side, cell.side * 2, cell.side * 2);
+        context.drawImage(this.players[this.gameStatus.playerTurn - 1].deck[6].look, cell.x - cell.side, cell.y - cell.side, cell.side * 2, cell.side * 2);
     }
 
     async start(self) {
         console.log(self);
+        this.deckData = await this.deckGenerator()
         canvas.setAttribute("width", canvasW)
         canvas.setAttribute("height", canvasH)
+        this.players = [
+            new Player({
+                id: 1,
+                name: "Lord",
+                deck: this.deckData,
+                hp: 100
+            }),
+            new Player({
+                id: 2,
+                name: "Worm",
+                deck: this.deckData,
+                hp: 100
+            }),
+        ]
+        console.log(this.players);
         this.render(this.gameScreen, fps)
     }
 
