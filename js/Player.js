@@ -5,6 +5,8 @@ let Player = class Player{
         this.name=data.name,
         this.deck=data.deck,
         this.hp=data.hp
+        this.cardsInHand = [];
+        this.selectedCard = this.deck[0];
     }
 
 }

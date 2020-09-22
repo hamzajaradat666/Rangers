@@ -1,12 +1,12 @@
 let canvasW = CONFIGURATIONS.canvasW;
 let canvasH = CONFIGURATIONS.canvasH;
-let barHeight = 300
+let barHeight = 150
 let GameBar = [{
     title: "gameBar",
     sx: 0,
     sy: canvasH - barHeight,
-    dx: canvasW,
-    dy: barHeight,
+    dx: canvasW - 10,
+    dy: barHeight - 10,
     gameBarSections: [{
             title: "status",
             get ref() {
@@ -138,7 +138,7 @@ let GameBar = [{
             },
             subSections: [{
                 margin: 10,
-                title:"endTurn",
+                title:"initCardsInHandPalcement",
                 get ref() {
                     return GameBar[0].gameBarSections[1]
                 },
@@ -149,38 +149,29 @@ let GameBar = [{
                     return this.ref.sy + this.margin
                 },
                 get dx() {
-                    return 60
+                    return this.ref.dx/5
                 },
                 get dy() {
-                    return 20
-                },
-                get valueSx() {
-                    return this.sx * this.sx
-                },
-                get valueSy() {
-                    return this.sy
-                },
-                get valueDx() {
-                    return this.dx * this.sx
-                },
-                get valueDy() {
-                    return this.dy
+                    return this.ref.dy - this.margin*2
                 },
             }]
         },
         {
             title: "deck",
+            get ref() {
+                return GameBar[0]
+            },
             get sx() {
-                return GameBar[0].dx - GameBar[0].dx / 4
+                return this.ref.dx - this.ref.dx / 4
             },
             get sy() {
-                return GameBar[0].sy
+                return this.ref.sy
             },
             get dx() {
-                return GameBar[0].dx / 4
+                return this.ref.dx / 4
             },
             get dy() {
-                return GameBar[0].dy
+                return this.ref.dy
             },
             subSections: [{
                 margin: 10,
@@ -189,10 +180,10 @@ let GameBar = [{
                     return GameBar[0].gameBarSections[2]
                 },
                 get sx() {
-                    return this.ref.sx + this.margin
+                    return this.ref.sx + this.ref.dx - this.dx
                 },
                 get sy() {
-                    return this.ref.sy + this.margin
+                    return this.ref.sy + this.ref.dy - this.dy
                 },
                 get dx() {
                     return 60
@@ -201,13 +192,13 @@ let GameBar = [{
                     return 20
                 },
                 get valueSx() {
-                    return this.sx * this.sx
+                    return this.sx + this.margin
                 },
                 get valueSy() {
-                    return this.sy
+                    return this.sy + this.margin
                 },
                 get valueDx() {
-                    return this.dx * this.sx
+                    return this.dx
                 },
                 get valueDy() {
                     return this.dy
