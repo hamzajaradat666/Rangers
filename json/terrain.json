@@ -1,0 +1,18 @@
+[
+
+    {
+        "id":1,
+        "name":"ice1",
+        "type":"ice",
+        "desc":"icy plain",
+        "look":"./assets/terrain_ice.png"
+    },
+    {
+        "id":2,
+        "name":"2",
+        "type":"2",
+        "desc":"2 2",
+        "look":"./assets/Hexagon.png"
+    }
+
+]

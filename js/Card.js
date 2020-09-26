@@ -1,5 +1,5 @@
 
-let Card = class Card{
+class Card{
 
     constructor(unit){
 
