@@ -14,10 +14,10 @@ let canvasW = CONFIGURATIONS.canvasW;
 let canvasH = CONFIGURATIONS.canvasH;
 document.getElementById("drawarea").setAttribute("width", canvasW);
 document.getElementById("drawarea").setAttribute("height", canvasH);
-let cellside = canvasW / 50;
-let initPosX = 2
-let initPosY = 4/100;
-let boardWidth = 30
+let cellside = canvasW / 35;
+let initPosX = Math.floor(canvasW / 250)
+let initPosY = 4 / 100;
+let boardWidth = 11
 let boardHeight = 5
 let initPosXValue = initPosX
 let initPosYValue = initPosY
@@ -33,6 +33,11 @@ let now;
 let elapsed
 let currentRenderScreen = "startScreen";
 let OnLoadingData = false;
+let defaultState = {
+    type: "1",
+    owner: {},
+    look: "",
+}
 
 export class GameEngine {
 
@@ -51,32 +56,59 @@ export class GameEngine {
         this.map;
         this.mapType = "flat"
         this.mapTile = {
-                x: this.cellside,
-                y: this.cellside,
-                cir_R: this.cellside,
-                in_r: this.r,
-                side: this.cellside,
-                cellnum: 1,
-                isOccupied: false,
-                state: {
-                    type: "1",
-                    owner: "0"
-                }
-            },
+
+            x: this.cellside,
+            y: this.cellside,
+            cir_R: this.cellside,
+            in_r: this.r,
+            side: this.cellside,
+            cellnum: 1,
+            isOccupied: false,
+            state: {
+                type: "1",
+                owner: {},
+                look: "",
+            }
+        },
             this.deckData = [],
+            this.drawCards = []
             this.players = [],
             this.terrainData = [],
             this.gameStatus = {
                 playerTurn: 1,
                 phase: 1,
             }
+        this.activePlayer;
     }
     prepareMap = async () => {
+        let p1 = this.players[0]
+        let p2 = this.players[1]
         this.map = this.make2D(this.mapType);
+        console.log(this.map);
+        this.map.forEach(row => {
+            row.forEach(tile => {
+                if (tile.cellnum == Math.ceil(row.length / 2)) {
+                    console.log(tile.cellnum, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
+                    p1.selectedCard = p1.deck[0]
+                    tile.state.look = p1.selectedCard.look
+                    tile.state.owner = p1.name
+                    tile.state.type = 3
+                    tile.isOccupied = true
+                }
+                if (tile.cellnum == this.map.length * row.length - Math.floor(row.length / 2)) {
+                    console.log(tile.cellnum, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
+                    p2.selectedCard = p2.deck[0]
+                    tile.state.look = p2.selectedCard.look
+                    tile.state.owner = p2.name
+                    tile.state.type = 3
+                    tile.isOccupied = true
+                }
+            })
+        })
         OnLoadingData = false
         setTimeout(() => {
             currentRenderScreen = "gameScreen"
-        }, 100);
+        }, 0);
     }
     render = (renderScreen, fps) => {
         then = Date.now();
@@ -97,7 +129,7 @@ export class GameEngine {
                     }
                     this.mapDrawer2DVertical()
                     this.gameBar()
-                    this.gameLoginCheck()
+                    this.gameLogicCheck()
                     break;
                 case "startScreen":
                     this.startScreen()
@@ -136,118 +168,106 @@ export class GameEngine {
     gameBar = () => {
         GameBar.forEach((gameBarBody) => {
             gameBarBody.gameBarSections.forEach((sections) => {
+                context.save();
+                context.fillStyle = '#423c6d';
+                context.fillRect(sections.sx, sections.sy, sections.dx, sections.dy);
+                context.restore();
                 sections.subSections.forEach(sub => {
-                    if (OnMouseDownInBox(sections.sx, sections.sy, sections.dx, sections.dy)) {
-                        context.save();
-                        context.strokeStyle = "blue"
-                        context.strokeRect(sections.sx, sections.sy, sections.dx, sections.dy);
-                        context.restore()
-                        switch (sections.title) {
-                            case "status":
-                                context.fillStyle = 'black';
-                                context.fillText(sub.title, sub.sx, sub.sy);
-                                switch (sub.title) {
-                                    case "playerHP":
-                                        context.fillText(this.players[this.gameStatus.playerTurn - 1].hp, sub.valueSx, sub.valueSy);
-                                        break;
-                                    case "playerName":
-                                        context.fillText(this.players[this.gameStatus.playerTurn - 1].name, sub.valueSx, sub.valueSy);
-                                        break;
-                                    case "playerTurn":
-                                        context.fillText(this.players[this.gameStatus.playerTurn - 1].id, sub.valueSx, sub.valueSy);
-                                        break;
-                                }
-                                break;
-                            case "cards":
-                                let length = 5
-                                for (let i = 1; i <= length; i += 1) {
-                                    let tempCell = {
-                                        x: sub.sx * i * 0.4 + sub.sx / 1.3,
-                                        y: sub.sy + 60,
-                                        side: sub.dx / 2
-                                    }
-                                    this.drawImage({
-                                        card: {
-                                            look: this.players[this.gameStatus.playerTurn - 1].deck[i].look,
-                                            ...tempCell
-                                        }
-                                    })
-                                    if (OnMouseDownInBox(tempCell.x - tempCell.side / 2, tempCell.y - tempCell.side / 2, tempCell.side, tempCell.side)) {
-                                        this.players[this.gameStatus.playerTurn - 1].selectedCard = this.players[this.gameStatus.playerTurn - 1].deck[i]
-                                        context.strokeRect(tempCell.x - tempCell.side, tempCell.y - tempCell.side, tempCell.side * 2, tempCell.side * 2);
-                                    }
-                                }
-                                break;
-                            case "deck":
-                                context.fillText(sub.title, sub.valueSx, sub.valueSy);
-                                context.strokeRect(sub.sx, sub.sy, sub.dx, sub.dy);
-                                if (OnMouseDownInBox(sub.sx, sub.sy, sub.dx, sub.dy)) {
-                                    if (this.gameStatus.playerTurn == 1)
-                                        this.gameStatus.playerTurn = 2
-                                    else this.gameStatus.playerTurn = 1
-                                }
-                                break;
-                        }
-                    } else {
-                        context.save();
-                        context.strokeStyle = "red"
-                        context.strokeRect(sections.sx, sections.sy, sections.dx, sections.dy);
-                        context.restore()
-                        context.save();
-                        context.globalAlpha = 0.1;
-                        context.fillRect(sections.sx, sections.sy, sections.dx, sections.dy);
-                        context.restore();
-                        switch (sections.title) {
-                            case "status":
-                                context.fillStyle = 'black';
-                                context.fillText(sub.title, sub.sx, sub.sy);
-                                switch (sub.title) {
-                                    case "playerHP":
-                                        context.fillText(this.players[this.gameStatus.playerTurn - 1].hp, sub.valueSx, sub.valueSy);
-                                        break;
-                                    case "playerName":
-                                        context.fillText(this.players[this.gameStatus.playerTurn - 1].name, sub.valueSx, sub.valueSy);
-                                        break;
-                                    case "playerTurn":
-                                        context.fillText(this.players[this.gameStatus.playerTurn - 1].id, sub.valueSx, sub.valueSy);
-                                        break;
-                                }
-                                break;
-                            case "cards":
-                                let length = 5
-                                for (let i = 1; i <= length; i += 1) {
-                                    let tempCell = {
-                                        x: sub.sx * i * 0.4 + sub.sx / 1.3,
-                                        y: sub.sy + 60,
-                                        side: sub.dx / 2
-                                    }
-                                    this.drawImage({
-                                        card: {
-                                            look: this.players[this.gameStatus.playerTurn - 1].deck[i].look,
-                                            ...tempCell
-                                        }
-                                    })
-                                }
-                                break;
-                            case "deck":
-                                context.strokeRect(sub.sx, sub.sy, sub.dx, sub.dy);
-                                context.fillText(sub.title, sub.valueSx, sub.valueSy);
-                                break;
-                        }
+                    switch (sections.title) {
+                        case "status":
+                            this.PlayerStatus(sub)
+                            break;
+                        case "cards":
+                            this.Cards(sub, OnMouseDownInBox(sections.sx, sections.sy, sections.dx, sections.dy))
+                            break;
+                        case "deck":
+                            this.Deck(sub, OnMouseDownInBox(sections.sx, sections.sy, sections.dx, sections.dy))
+                            break;
                     }
                 })
             })
         })
     }
-    gameLoginCheck = () => {
+    gameLogicCheck = () => {
 
+    }
+    PlayerStatus = (sub) => {
+        context.save();
+        context.fillText(sub.title, sub.sx, sub.sy);
+        switch (sub.title) {
+            case "playerHP":
+                context.fillText(this.activePlayer.hp, sub.valueSx, sub.valueSy);
+                break;
+            case "playerName":
+                context.fillText(this.activePlayer.name, sub.valueSx, sub.valueSy);
+                break;
+            case "playerTurn":
+                context.fillText(this.activePlayer.id, sub.valueSx, sub.valueSy);
+                break;
+        }
+        context.restore();
+        context.fillStyle = this.activePlayer.color;
+
+    }
+    Cards = (sub, click) => {
+        context.save();
+        context.fillStyle = "red"
+        let count = -1;
+        for (let i = 1; i <= 3; i++) {
+            for (let j = 1; j <= 10; j++) {
+                count++
+                let tempCell = {
+                    x: sub.sx * j / 5 + sub.sx / 1.16,
+                    y: sub.sy + i * sub.dy / 3 - 30,
+                    side: sub.dx / 5
+                }
+                this.drawImage({
+                    card: {
+                        look: this.activePlayer.deck[count].look,
+                        ...tempCell
+                    }
+                })
+                if (click) {
+                    if (OnMouseDownInBox(tempCell.x - tempCell.side / 2, tempCell.y - tempCell.side / 2, tempCell.side, tempCell.side)) {
+                        this.activePlayer.selectedCard = this.activePlayer.deck[count]
+                        console.log(this.activePlayer.selectedCard);
+                        context.fillRect(tempCell.x - tempCell.side, tempCell.y - tempCell.side, tempCell.side * 2, tempCell.side * 2);
+                    }
+                }
+                else {
+
+                }
+            }
+            context.restore();
+        }
+    }
+    Deck = (sub, click) => {
+        context.save();
+        context.save();
+        context.fillStyle = this.activePlayer.color;
+        context.fillText(sub.title, sub.valueSx, sub.valueSy);
+        context.strokeRect(sub.sx, sub.sy, sub.dx, sub.dy);
+        context.restore();
+        if (click) {
+            if (OnMouseDownInBox(sub.sx, sub.sy, sub.dx, sub.dy)) {
+                if (this.gameStatus.playerTurn == 1) {
+                    this.gameStatus.playerTurn = 2
+                }
+                else this.gameStatus.playerTurn = 1
+                this.activePlayer = this.players[this.gameStatus.playerTurn - 1]
+            }
+        }
+        else {
+
+        }
+        context.restore();
     }
     startScreen = () => {
         context.clearRect(0, 0, canvasW, canvasH);
         StartScreen.forEach((ele) => {
             if (OnMouseDownInBox(ele.sx, ele.sy, ele.dx, ele.dy)) {
                 context.drawImage(ele.clicked, ele.sx, ele.sy, ele.dx, ele.dy);
-                if (OnMouseClick())
+                if (OnMousePressed())
                     switch (ele.title) {
                         case "startButton":
                             OnLoadingData = true
@@ -275,6 +295,7 @@ export class GameEngine {
                     col.in_r *= zoom;
                     col.x *= zoom;
                     col.y *= zoom;
+                    col.x -= zoom * 12;
                 }
                 if (zoom < latestValue) {
                     col.side /= latestValue
@@ -282,6 +303,7 @@ export class GameEngine {
                     col.in_r /= latestValue;
                     col.x /= latestValue;
                     col.y /= latestValue;
+                    col.x += zoom * 12;
                 }
             })
         })
@@ -330,7 +352,7 @@ export class GameEngine {
                     }
                     context.strokeRect(posX, posY, data.dx, data.dy)
                     if (OnMouseDownInBox(posX, posY, data.dx, data.dy))
-                        if (OnMouseClick()) {
+                        if (OnMousePressed()) {
                             context.strokeRect(posX, posY, data.dx, data.dy)
                             if (data.title.includes("zoomin") && this.zoomValue < 25) {
                                 this.zoomValue++
@@ -355,8 +377,9 @@ export class GameEngine {
 
     tippedHexDraw = (tile) => {
         context.save();
+        context.globalAlpha = 0.6;
         context.strokeStyle = "rgba(34, 4, 50, 1)";
-        context.fillStyle = "rgba(122, 120, 150, 1)";
+        context.fillStyle = "white";
         context.beginPath();
         context.moveTo(tile.x, tile.y);
         context.moveTo(tile.x, tile.y - tile.cir_R)
@@ -366,15 +389,16 @@ export class GameEngine {
         context.lineTo(tile.x + tile.in_r, tile.y + tile.side / 2)
         context.lineTo(tile.x + tile.in_r, tile.y - tile.side / 2)
         context.closePath();
-        context.stroke();
+        context.fill();
         context.fillStyle = "red"
         context.font = "8px Arial";
         context.restore();
     }
     flatHexDraw = (tile) => {
         context.save();
+        context.globalAlpha = 0.6;
         context.strokeStyle = "rgba(34, 4, 50, 1)";
-        context.fillStyle = "rgba(122, 120, 150, 1)";
+        context.fillStyle = "white";
         context.beginPath();
         context.moveTo(tile.x, tile.y);
         context.moveTo(tile.x - tile.cir_R, tile.y)
@@ -384,48 +408,60 @@ export class GameEngine {
         context.lineTo(tile.x + tile.side / 2, tile.y + tile.in_r)
         context.lineTo(tile.x - tile.side / 2, tile.y + tile.in_r)
         context.closePath();
-        context.stroke();
+        context.fill();
         context.restore();
     }
 
-
+    grayScale(context, canvas) {
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+        var pixels = imgData.data;
+        for (var i = 0, n = pixels.length; i < n; i += 4) {
+            var grayscale = pixels[i] * .3 + pixels[i + 1] * .59 + pixels[i + 2] * .11;
+            pixels[i] = grayscale; // red
+            pixels[i + 1] = grayscale; // green
+            pixels[i + 2] = grayscale; // blue
+            //pixels[i+3]              is alpha
+        }
+        //redraw the image in black & white
+        context.putImageData(imgData, 0, 0);
+    }
+    //add the function call in the imageObj.onload
     mapDrawer2DVertical = () => {
-        this.map.forEach((tileProps, i) => {
-            tileProps.forEach((tile, j) => {
+        let img = new Image()
+        img.src = "../assets/bg2.jpg";
+        context.save();
+        context.globalAlpha = 0.5;
+        /* context.drawImage(img, 0, 0, canvasW, canvasH); */
+        /* this.grayScale(context, canvas); */
+        context.restore();
+        this.map.forEach((tileProps, j) => {
+            tileProps.forEach((tile, i) => {
                 switch (this.mapType) {
                     case "tipped":
                         this.tippedHexDraw(tile)
                         break;
                     case "flat":
                         this.flatHexDraw(tile)
-
                         break;
                 }
-                context.fillStyle = "red"
-                context.font = "8px Arial";
-                context.fillText(i + " - " + j, tile.x, tile.y);
                 context.fillRect(0, 0, 10, 10);
-                /* this.drawImage({
-                    card: {look:this.terrainData[1].look,...tile}
-                }); */
+                this.drawImage({
+                    card: { look: this.terrainData[0].look, ...tile }
+                });
                 if (OnMouseDownInBox(0, 0, 10, 10)) {
                     currentRenderScreen = "optionsScreen"
                 }
-                if (OnMouseHoverOverHex(tile) && OnMousePressed() && tile.isOccupied == false) {
-                    tile.isOccupied = true;
-                    tile.state = {
-                        owner: this.players[this.gameStatus.playerTurn - 1],
-                        look: this.players[this.gameStatus.playerTurn - 1].selectedCard.look
-                    }
-                    this.strokeHex(tile)
-                } else if (OnMouseHoverOverHex(tile) && tile.isOccupied == true) {
-                    this.strokeHex(tile)
-                    if (OnMousePressed()) {
-                        tile.isOccupied = false;
-                        this.strokeHex(tile)
-                    }
-                }
                 if (tile.isOccupied == true) {
+                    if (OnMouseHoverOverHex(tile)) {
+                        if (OnMousePressed()) {
+                            if (tile.state.type == 3)
+                                return
+                            else {
+                                tile.isOccupied = false
+                                tile.state = { ...defaultState }
+                            }
+                        }
+                    }
                     this.strokeHex(tile)
                     this.drawImage({
                         card: {
@@ -434,6 +470,25 @@ export class GameEngine {
                         }
                     });
                 }
+                else {
+                    context.save()
+                    context.fillStyle = "red"
+                    context.font = "8px Arial";
+                    context.fillText(tile.cellnum, tile.x, tile.y);
+                    context.restore()
+                    if (OnMouseHoverOverHex(tile)) {
+                        if (OnMousePressed()) {
+                            tile.state = {
+                                owner: this.activePlayer,
+                                look: this.activePlayer.selectedCard.look
+                            }
+
+                            this.strokeHex(tile)
+                            tile.isOccupied = true;
+                        }
+                    }
+                }
+
             })
         })
 
@@ -443,10 +498,10 @@ export class GameEngine {
         deck.forEach((card, i) => {
             context.drawImage(card.look, card.x, card.y, scale, scale)
             if (OnMouseHoverOverHex({
-                    x: card.x,
-                    y: card.y,
-                    in_r: card.in_r
-                })) {
+                x: card.x,
+                y: card.y,
+                in_r: card.in_r
+            })) {
                 context.clearRect(card.x, card.y, scale, scale)
                 context.strokeRect(card.x, card.y, scale, scale)
                 context.drawImage(card.look, card.x, card.y, scale, scale)
@@ -479,26 +534,29 @@ export class GameEngine {
         let closeX;
         let closeY
         let yAxisMargin;
+        let I = this.initPosX;
+        let J = this.initPosY;
         switch (mapType) {
             case "tipped":
                 closeX = this.tippedCloseX;
                 closeY = this.tippedCloseY;
                 yAxisMargin = 2.5;
-            break;
+                break;
             case "flat":
                 closeX = this.flatCloseX;
                 closeY = this.flatCloseY;
                 yAxisMargin = 1.87;
-            break;
+                break;
         }
         let map = []
         let inner_map = [];
-        for (let i = this.initPosX; i < this.width + this.initPosX; i += 1) {
-            for (let j = this.initPosY; j < this.height + this.initPosY; j += 1) {
+        for (let i = I; i < this.width + I; i += 1) {
+            for (let j = J; j < this.height + J; j += 1) {
                 this.mapTile.x = this.mapTile.x * i * closeX;
                 this.mapTile.y = i % 2 == 0 ? this.mapTile.y * j * closeY + this.mapTile.cir_R * yAxisMargin : this.mapTile.y * j * closeY + this.mapTile.cir_R;
                 inner_map.push({
-                    ...this.mapTile
+                    ...this.mapTile,
+                    state: { ...this.mapTile.state }
                 });
                 this.mapTile.x = this.cellside;
                 this.mapTile.y = this.cellside;
@@ -529,7 +587,7 @@ export class GameEngine {
 
     fillHex = (cell) => {
         context.save();
-        context.strokeStyle = color;
+        context.strokeStyle = cell.state.owner.color;
         context.beginPath();
         context.moveTo(cell.x, cell.y);
         context.moveTo(cell.x - cell.cir_R, cell.y)
@@ -539,7 +597,7 @@ export class GameEngine {
         context.lineTo(cell.x + cell.side / 2, cell.y + cell.in_r)
         context.lineTo(cell.x - cell.side / 2, cell.y + cell.in_r)
         context.closePath();
-        context.fillStyle = "rgba(200, 110, 100, 1)";
+        context.fillStyle = cell.state.owner.color;
         context.fill();
         context.restore();
     }
@@ -556,7 +614,7 @@ export class GameEngine {
         context.lineTo(cell.x - cell.side / 2, cell.y + cell.in_r)
         context.closePath();
         context.lineWidth = 5;
-        context.strokeStyle = "rgba(34, 110, 100, 1)";
+        context.strokeStyle = cell.state.owner.color;
         context.stroke();
         context.restore();
     }
@@ -564,27 +622,43 @@ export class GameEngine {
     drawImage = (cell) => {
         context.drawImage(cell.card.look, cell.card.x - cell.card.side, cell.card.y - cell.card.side, cell.card.side * 2, cell.card.side * 2);
     }
-
+    prepareDeck = (deckData, name="") => {
+        console.log(name);
+        let tempDeck = []
+        for (let i = 1; i <= 30; i++) {
+            let card = deckData[Math.floor(Math.random() * 10)];
+            if(name!=""){
+                card["id"] = i;
+                card["owner"] = name;
+            }
+            tempDeck.push(card);
+        }
+        return tempDeck
+    }
     start = async (self) => {
         console.log(self);
         this.deckData = await this.deckGenerator()
         this.terrainData = await this.terrainGenerator()
+        this.drawCards = this.prepareDeck(this.deckData)
         canvas.setAttribute("width", canvasW)
         canvas.setAttribute("height", canvasH)
         this.players = [
             new Player({
                 id: 1,
-                name: "Lord",
-                deck: this.deckData,
-                hp: 100
+                get name() { return "Lord" },
+                deck: [...this.prepareDeck(this.deckData, "Lord")],
+                hp: 100,
+                color: "darkblue"
             }),
             new Player({
                 id: 2,
-                name: "Worm",
-                deck: this.deckData,
-                hp: 100
+                get name() { return "Worm" },
+                deck: [...this.prepareDeck(this.deckData, "Worm")],
+                hp: 100,
+                color: "darkred"
             }),
         ]
+        this.activePlayer = this.players[this.gameStatus.playerTurn - 1]
         console.log(this.players);
         this.render(this.gameScreen, fps)
     }

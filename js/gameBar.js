@@ -1,6 +1,6 @@
 let canvasW = CONFIGURATIONS.canvasW;
 let canvasH = CONFIGURATIONS.canvasH;
-let barHeight = 150
+let barHeight = 250
 let GameBar = [{
     title: "gameBar",
     sx: 0,
@@ -184,6 +184,36 @@ let GameBar = [{
                 },
                 get sy() {
                     return this.ref.sy + this.ref.dy - this.dy
+                },
+                get dx() {
+                    return 60
+                },
+                get dy() {
+                    return 20
+                },
+                get valueSx() {
+                    return this.sx + this.margin
+                },
+                get valueSy() {
+                    return this.sy + this.margin
+                },
+                get valueDx() {
+                    return this.dx
+                },
+                get valueDy() {
+                    return this.dy
+                },
+            },{
+                margin: 10,
+                title:"drawCards",
+                get ref() {
+                    return GameBar[0].gameBarSections[2]
+                },
+                get sx() {
+                    return this.ref.sx
+                },
+                get sy() {
+                    return this.ref.sy
                 },
                 get dx() {
                     return 60

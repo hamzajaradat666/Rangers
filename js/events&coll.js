@@ -1,18 +1,14 @@
-var mx, my, md=false;
-let mouseClick = {
-    d:false,
-    u:false
-}
+var mx, my, md = false;
+
 var keys = [];
 
 document.addEventListener('mousedown', function (e) {
     md = true;
-    mouseClick.d = true
+    
 }, false);
 
 document.addEventListener('mouseup', function (e) {
     md = false;
-    mouseClick.u = true
 }, false);
 
 
@@ -25,9 +21,10 @@ document.addEventListener('mousemove', function (e) {
 //-- --------------------------------------------------------------------------------------
 
 function OnMouseDownInBox(x, y, width, height) {
-    if (mx >= x && mx <= x + width && my >= y && my <= y + height && md){
+    if (mx >= x && mx <= x + width && my >= y && my <= y + height && md) {
         console.log("OnMouseDownInBox");
-    return true;
+        simulateClick();
+        return true;
 
     }
 
@@ -47,21 +44,17 @@ function OnMouseHoverOverHex(hex) {
 
 }
 
-function OnMouseClick() {
-    console.log(mouseClick);
-    if (mouseClick.d&&mouseClick.u) {
-        console.log("OnMouseClick");
-        mouseClick.d=false;
-        mouseClick.u=false;
-        return (true)
-    } else
-        return (false)
+function simulateClick(){
+    let X = setTimeout(() => {
+        md = false
+        clearTimeout(X);
+    }, 0.1);
 }
 
 function OnMousePressed() {
-
     if (md == true) {
         console.log("OnMousePressed");
+        simulateClick();
         return true;
     } else return false
 

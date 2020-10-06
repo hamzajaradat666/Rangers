@@ -5,8 +5,9 @@ let Player = class Player{
         this.name=data.name,
         this.deck=data.deck,
         this.hp=data.hp
-        this.cardsInHand = [];
+        this.cardsInHand = 40;
         this.selectedCard = this.deck[0];
+        this.color = data.color;
     }
 
 }
