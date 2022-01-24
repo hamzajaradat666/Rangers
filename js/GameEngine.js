@@ -15,7 +15,7 @@ let canvasH = CONFIGURATIONS.canvasH;
 document.getElementById("drawarea").setAttribute("width", canvasW);
 document.getElementById("drawarea").setAttribute("height", canvasH);
 let tileSide = canvasW / 35;
-let initPosX = Math.floor(canvasW / 390)
+let initPosX = Math.floor(canvasW / 390)+5
 let initPosY = 4 / 100;
 let boardWidth = 11
 let boardHeight = 7
@@ -57,8 +57,8 @@ export class GameEngine {
         this.r = this.tileSide * Math.sqrt(3) / 2;
         this.tippedCloseX = 0.866;
         this.tippedCloseY = 3;
-        this.flatCloseX = 1.51;
-        this.flatCloseY = 1.74;
+        this.flatCloseX = 1.27;
+        this.flatCloseY = 1.52;
         this.map;
         this.mapType = MAPTYPES.Flat
         this.mapTile = {
@@ -97,13 +97,13 @@ export class GameEngine {
                     console.log(tile.tileNumber, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
                     p1.selectedCard = defaultState
                     p1.action = 'select'
-                    
-                   /*  p1.baseCard = p1.deck[p1.deck.length - 1]
-                    tile.state.look = p1.baseCard.look
-                    tile.state.owner = p1.name
-                    tile.state.type = 3
-                    tile.isOccupied = true
-                    console.log(p1); */
+
+                    /*  p1.baseCard = p1.deck[p1.deck.length - 1]
+                     tile.state.look = p1.baseCard.look
+                     tile.state.owner = p1.name
+                     tile.state.type = 3
+                     tile.isOccupied = true
+                     console.log(p1); */
                 }
                 if (tile.tileNumber == this.map.length * row.length - Math.floor(row.length / 2)) {
                     console.log(tile.tileNumber, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
@@ -183,6 +183,7 @@ export class GameEngine {
         GameBar.forEach((gameBarBody) => {
             gameBarBody.gameBarSections.forEach((sections) => {
                 context.save();
+                context.globalAlpha = 0.2
                 context.fillStyle = '#42666d';
                 context.fillRect(sections.sx, sections.sy, sections.dx, sections.dy);
                 context.restore();
@@ -320,7 +321,7 @@ export class GameEngine {
                         break;
                 }
             }
-            else{
+            else {
                 this.activePlayer.action = 'select'
             }
         }
@@ -501,7 +502,7 @@ export class GameEngine {
             dy: 20,
         }
         let img = new Image()
-        img.src = "../assets/bg2.jpg";
+        img.src = "../assets/bg0.jpg";
         context.save();
         context.globalAlpha = 0.5;
         context.fillRect(optionButton.x, optionButton.y, optionButton.dx, optionButton.dy);
@@ -525,7 +526,7 @@ export class GameEngine {
                 this.drawImage({
                     card: { look: this.terrainData[0].look, ...tile }
                 });
-                if (tile.isOccupied == true) { 
+                if (tile.isOccupied == true) {
                     if (OnMouseHoverOverHex(tile) && OnMousePressed()) {
                         if (tile.state.type == 3)
                             return
@@ -537,7 +538,7 @@ export class GameEngine {
 
                         }
                     }
-                    this.strokeHex(tile)
+                    //this.strokeHex(tile)
                     this.drawImage({
                         card: {
                             ...tile.state,
@@ -561,7 +562,7 @@ export class GameEngine {
                                     owner: this.activePlayer,
                                     look: this.activePlayer.selectedCard.look
                                 }
-                                this.strokeHex(tile)
+                                //this.strokeHex(tile)
                                 tile.isOccupied = true;
                                 this.activePlayer.selectedCard = defaultState;
                             }
@@ -611,7 +612,7 @@ export class GameEngine {
             case MAPTYPES.Flat:
                 closeX = this.flatCloseX;
                 closeY = this.flatCloseY;
-                yAxisMargin = 1.87;
+                yAxisMargin = 1.72;
                 break;
         }
         let map = []
@@ -619,7 +620,7 @@ export class GameEngine {
         for (let i = I; i < this.width + I; i += 1) {
             for (let j = J; j < this.height + J; j += 1) {
                 this.mapTile.x = this.mapTile.x * i * closeX;
-                this.mapTile.y = i % 2 == 0 ? this.mapTile.y * j * closeY + this.mapTile.cir_R * yAxisMargin : this.mapTile.y * j * closeY + this.mapTile.cir_R;
+                this.mapTile.y = i % 2 == 0 ? (this.mapTile.y - 2) * j * closeY + this.mapTile.cir_R * yAxisMargin : (this.mapTile.y - 2) * j * closeY + this.mapTile.cir_R;
                 inner_map.push({
                     ...this.mapTile,
                     state: { ...this.mapTile.state }
@@ -679,20 +680,20 @@ export class GameEngine {
         context.lineTo(tile.x + tile.side / 2, tile.y + tile.in_r)
         context.lineTo(tile.x - tile.side / 2, tile.y + tile.in_r)
         context.closePath();
-        context.lineWidth = 5;
+        context.lineWidth = 1;
         context.strokeStyle = tile.state.owner.color;
         context.stroke();
         context.restore();
     }
 
     drawImage = (tile) => {
-        if(tile.card.look)
-        context.drawImage(tile.card.look, tile.card.x - tile.card.side, tile.card.y - tile.card.side, tile.card.side * 2, tile.card.side * 2);
+        if (tile.card.look)
+            context.drawImage(tile.card.look, tile.card.x - tile.card.side, tile.card.y - tile.card.side, tile.card.side * 2, tile.card.side * 2);
     }
     prepareSharedDeck = (deckData, name = "Neutral", numOfCards) => {
         console.log(name);
         let tempDeck = []
-        for (let i = 0; i < 28 ; i++) {
+        for (let i = 0; i < 28; i++) {
             let card = { ...deckData[0] };
             card.id = i;
             card.owner = name;
@@ -736,7 +737,7 @@ export class GameEngine {
         }
         this
         console.log(this.deckArranger(this.deckShuffler(tempDeck)));
-        
+
         return this.deckArranger(tempDeck)
     }
     prepareDeck = (deckData, name = "", numOfCards) => {
@@ -783,14 +784,14 @@ export class GameEngine {
                 get name() { return "Lord" },
                 deck: [...this.prepareDeck(this.deckData, "Lord", 0)],
                 hp: 100,
-                color: "darkblue"
+                color: "lightblue"
             }),
             new Player({
                 id: 2,
                 get name() { return "Worm" },
                 deck: [...this.prepareDeck(this.deckData, "Worm", 0)],
                 hp: 100,
-                color: "darkred"
+                color: "lightgreen"
             }),
         ]
         this.activePlayer = this.players[this.gameStatus.playerTurn - 1]
@@ -799,6 +800,7 @@ export class GameEngine {
     }
 
     zoom = () => {
+
         let zoom = (parseFloat(document.getElementById("zoom").value) + 1000) / 1000;
         console.log(zoom);
         this.map.forEach((row) => {
@@ -829,7 +831,7 @@ export class GameEngine {
         })
     }
     deckShuffler(deck) {
-        return deck.sort((a,b)=>{
+        return deck.sort((a, b) => {
             return (Math.random() * (1 - -1) + -1)
         })
     }

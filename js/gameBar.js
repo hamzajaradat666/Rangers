@@ -1,5 +1,5 @@
-let canvasW = CONFIGURATIONS.canvasW;
-let canvasH = CONFIGURATIONS.canvasH;
+let canvasW = CONFIGURATIONS.canvasW+10;
+let canvasH = CONFIGURATIONS.canvasH+10;
 let barHeight = 250
 let margin = 13
 let GameBar = [{
