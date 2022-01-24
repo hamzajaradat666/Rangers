@@ -1,6 +1,7 @@
 let canvasW = CONFIGURATIONS.canvasW;
 let canvasH = CONFIGURATIONS.canvasH;
 let barHeight = 250
+let margin = 13
 let GameBar = [{
     title: "gameBar",
     sx: 0,
@@ -26,7 +27,8 @@ let GameBar = [{
             },
             subSections: [{
                     title: "playerHP",
-                    margin: 10,
+                    margin,
+                    subSections:[],
                     get ref() {
                         return GameBar[0].gameBarSections[0]
                     },
@@ -57,7 +59,8 @@ let GameBar = [{
                 },
                 {
                     title: "playerName",
-                    margin: 10,
+                    margin,
+                    subSections:[],
                     get ref() {
                         return GameBar[0].gameBarSections[0]
                     },
@@ -88,7 +91,8 @@ let GameBar = [{
                 },
                 {
                     title: "playerTurn",
-                    margin: 10,
+                    margin,
+                    subSections:[],
                     get ref() {
                         return GameBar[0].gameBarSections[0]
                     },
@@ -117,6 +121,131 @@ let GameBar = [{
                         return this.dy
                     },
                 },
+                {
+                    title: "cardDetails",
+                    margin,
+                    get ref() {
+                        return GameBar[0].gameBarSections[0]
+                    },
+                    get sx() {
+                        return this.ref.sx + this.margin
+                    },
+                    get sy() {
+                        return this.ref.sy + this.margin * 4
+                    },
+                    get dx() {
+                        return this.ref.dx + this.margin * 4
+                    },
+                    get dy() {
+                        return this.ref.dy + this.margin * 4
+                    },
+                    get valueSx() {
+                        return this.sx * this.sx
+                    },
+                    get valueSy() {
+                        return this.sy
+                    },
+                    get valueDx() {
+                        return this.dx * this.sx
+                    },
+                    get valueDy() {
+                        return this.dy
+                    },
+                    subSections:[{
+                        title:"cardName",
+                        margin,
+                        get ref() {
+                            return GameBar[0].gameBarSections[0]
+                        },
+                        get sx() {
+                            return this.ref.sx + this.margin
+                        },
+                        get sy() {
+                            return this.ref.sy + this.margin * 5
+                        },
+                        get dx() {
+                            return this.ref.dx + this.margin * 5
+                        },
+                        get dy() {
+                            return this.ref.dy + this.margin * 5
+                        },
+                        get valueSx() {
+                            return this.sx * this.sx
+                        },
+                        get valueSy() {
+                            return this.sy
+                        },
+                        get valueDx() {
+                            return this.dx * this.sx
+                        },
+                        get valueDy() {
+                            return this.dy
+                        },
+                    },
+                    {
+                        title:"cardAttack",
+                        margin,
+                        get ref() {
+                            return GameBar[0].gameBarSections[0]
+                        },
+                        get sx() {
+                            return this.ref.sx + this.margin
+                        },
+                        get sy() {
+                            return this.ref.sy + this.margin * 6
+                        },
+                        get dx() {
+                            return this.ref.dx + this.margin * 6
+                        },
+                        get dy() {
+                            return this.ref.dy + this.margin * 6
+                        },
+                        get valueSx() {
+                            return this.sx * this.sx
+                        },
+                        get valueSy() {
+                            return this.sy
+                        },
+                        get valueDx() {
+                            return this.dx * this.sx
+                        },
+                        get valueDy() {
+                            return this.dy
+                        },
+                    },
+                    {
+                        title:"cardHP",
+                        margin,
+                        get ref() {
+                            return GameBar[0].gameBarSections[0]
+                        },
+                        get sx() {
+                            return this.ref.sx + this.margin
+                        },
+                        get sy() {
+                            return this.ref.sy + this.margin * 7
+                        },
+                        get dx() {
+                            return this.ref.dx + this.margin * 7
+                        },
+                        get dy() {
+                            return this.ref.dy + this.margin * 7
+                        },
+                        get valueSx() {
+                            return this.sx * this.sx
+                        },
+                        get valueSy() {
+                            return this.sy
+                        },
+                        get valueDx() {
+                            return this.dx * this.sx
+                        },
+                        get valueDy() {
+                            return this.dy
+                        },
+                    }]
+                    
+                },
             ]
         },
         {
@@ -137,7 +266,7 @@ let GameBar = [{
                 return this.ref.dy
             },
             subSections: [{
-                margin: 10,
+                margin,
                 title:"initCardsInHandPalcement",
                 get ref() {
                     return GameBar[0].gameBarSections[1]
@@ -174,7 +303,7 @@ let GameBar = [{
                 return this.ref.dy
             },
             subSections: [{
-                margin: 10,
+                margin,
                 title:"endTurn",
                 get ref() {
                     return GameBar[0].gameBarSections[2]
@@ -204,7 +333,7 @@ let GameBar = [{
                     return this.dy
                 },
             },{
-                margin: 10,
+                margin,
                 title:"drawCards",
                 get ref() {
                     return GameBar[0].gameBarSections[2]
@@ -232,6 +361,36 @@ let GameBar = [{
                 },
                 get valueDy() {
                     return this.dy
+                },
+            },{
+                margin:margin,
+                title:"delete",
+                get ref() {
+                    return GameBar[0].gameBarSections[2]
+                },
+                get sx() {
+                    return this.ref.sx
+                },
+                get sy() {
+                    return this.ref.sy + this.dy
+                },
+                get dx() {
+                    return 60
+                },
+                get dy() {
+                    return 20
+                },
+                get valueSx() {
+                    return this.sx + this.margin
+                },
+                get valueSy() {
+                    return this.sy + this.margin
+                },
+                get valueDx() {
+                    return this.dx + this.margin
+                },
+                get valueDy() {
+                    return this.dy + this.margin * 2
                 },
             }]
         }

@@ -2,7 +2,22 @@
 
     {
         "id":1,
-        "name":"peasent",
+        "name":"Move",
+        "hp":1,
+        "damage":1,
+        "type":"effect",
+        "ability":"none",
+        "desc":"a move card to move a selected unit",
+        "build_req":"none",
+        "summon_req":"none",
+        "place_req":null,
+        "range":null,
+        "look":"./assets/Card2.png"
+
+    },
+    {
+        "id":1,
+        "name":"Peasant",
         "hp":1,
         "damage":1,
         "type":"mortal",
@@ -16,144 +31,64 @@
 
     },
     {
-
         "id":2,
-        "name":"hawk",
+        "name":"Hawk",
         "hp":1,
-        "damage":5,
+        "damage":3,
         "type":"mortal",
         "ability":"can attack only mortals",
         "desc":"flesh hater",
         "build_req":"tower",
         "summon_req":"none",
         "place_req":1,
-        "range":999,
+        "range":"2-6",
         "look":"./assets/hawk.png"
 
     },
     {
         "id":3,
-        "name":"scout",
-        "hp":1,
-        "damage":0,
+        "name":"Ogre",
+        "hp":5,
+        "damage":5,
         "type":"mortal",
         "ability":"none",
-        "desc":"like a wall",
-        "build_req":"tower",
+        "desc":"a mere sarifice",
+        "build_req":"none",
         "summon_req":"none",
-        "place_req":1,
-        "range":0,
-        "look":"./assets/scout.png"
+        "place_req":7,
+        "range":"3-6",
+        "look":"./assets/peasent.png"
 
     },
     {
+        "id":1,
+        "name":"Siege",
+        "hp":1,
+        "damage":4,
+        "type":"mortal",
+        "ability":"none",
+        "desc":"a mere sarifice",
+        "build_req":"none",
+        "summon_req":"none",
+        "place_req":1,
+        "range":"2-8",
+        "look":"./assets/peasent.png"
 
-        "id":4,
-        "name":"sword_fellow",
-        "hp":2,
+    },
+    {
+        "id":1,
+        "name":"Knight",
+        "hp":3,
         "damage":2,
         "type":"mortal",
         "ability":"none",
-        "desc":"a young with a sword",
-        "build_req":"barrack",
-        "summon_req":"none",
-        "place_req":1,
-        "range":1,
-        "look":"./assets/sword_fellow.png"
-
-    },
-    {
-        "id":5,
-        "name":"sword_man",
-        "hp":3,
-        "damage":4,
-        "type":"mortal",
-        "ability":"none",
-        "desc":"a man with a sword",
-        "build_req":"barrack",
-        "summon_req":"none",
-        "place_req":1,
-        "range":1,
-        "look":"./assets/sword_man.png"
-
-    },
-    {
-        "id":6,
-        "name":"knight",
-        "hp":3,
-        "damage":4,
-        "type":"mortal",
-        "ability":"+1 move",
-        "desc":"a man with a sword and a horse",
-        "build_req":"2 barrack",
-        "summon_req":"none",
-        "place_req":2   ,
-        "range":1,
-        "look":"./assets/knight.png"
-
-    },
-    {
-        "id":7,
-        "name":"orc",
-        "hp":4,
-        "damage":4,
-        "type":"creature",
-        "ability":"none",
-        "desc":"shrek",
-        "build_req":"creature_dome",
-        "summon_req":"none",
-        "place_req":1,
-        "range":1,
-        "look":"./assets/orc.png"
-
-    },
-    {
-        "id":8,
-        "name":"fire_golem",
-        "hp":5,
-        "damage":7,
-        "type":"creature",
-        "ability":"none",
-        "desc":"a moving fire",
-        "build_req":"creature_dome",
+        "desc":"a mere sarifice",
+        "build_req":"none",
         "summon_req":"none",
         "place_req":2,
-        "range":1,
-        "look":"./assets/fire_golem.png"
-
-    },
-    {
-
-        "id":9,
-        "name":"water_golem",
-        "hp":5,
-        "damage":5,
-        "type":"creature",
-        "ability":"kills fire golem on summon",
-        "desc":"a moving sea",
-        "build_req":"2 creature_dome",
-        "summon_req":"none",
-        "place_req":2,
-        "range":1,
-        "look":"./assets/water_golem.png"
-
-    },
-    {
-
-        "id":10,
-        "name":"dragon",
-        "hp":12,
-        "damage":8,
-        "type":"creature",
-        "ability":"attack once every 5 turns",
-        "desc":"donkeys lover",
-        "build_req":"2 creature_dome",
-        "summon_req":"none",
-        "place_req":7,
-        "range":999,
-        "look":"./assets/dragon.png"
+        "range":"1-3",
+        "look":"./assets/Knight.png"
 
     }
-
 
 ]

@@ -6,7 +6,7 @@ let Player = class Player{
         this.deck=data.deck,
         this.hp=data.hp
         this.cardsInHand = 40;
-        this.selectedCard = this.deck[0];
+        this.selectedCard;
         this.color = data.color;
     }
 

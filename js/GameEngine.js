@@ -14,11 +14,11 @@ let canvasW = CONFIGURATIONS.canvasW;
 let canvasH = CONFIGURATIONS.canvasH;
 document.getElementById("drawarea").setAttribute("width", canvasW);
 document.getElementById("drawarea").setAttribute("height", canvasH);
-let cellside = canvasW / 35;
-let initPosX = Math.floor(canvasW / 250)
+let tileSide = canvasW / 35;
+let initPosX = Math.floor(canvasW / 390)
 let initPosY = 4 / 100;
 let boardWidth = 11
-let boardHeight = 5
+let boardHeight = 7
 let initPosXValue = initPosX
 let initPosYValue = initPosY
 let boardWidthValue = boardWidth
@@ -37,6 +37,12 @@ let defaultState = {
     type: "1",
     owner: {},
     look: "",
+    id: 999,
+}
+
+let MAPTYPES = {
+    Flat: "Flat",
+    Tipped: "Tipped"
 }
 
 export class GameEngine {
@@ -47,22 +53,22 @@ export class GameEngine {
         this.height = boardHeightValue;
         this.initPosX = initPosXValue;
         this.initPosY = initPosYValue;
-        this.cellside = cellside;
-        this.r = this.cellside * Math.sqrt(3) / 2;
+        this.tileSide = tileSide;
+        this.r = this.tileSide * Math.sqrt(3) / 2;
         this.tippedCloseX = 0.866;
         this.tippedCloseY = 3;
         this.flatCloseX = 1.51;
         this.flatCloseY = 1.74;
         this.map;
-        this.mapType = "flat"
+        this.mapType = MAPTYPES.Flat
         this.mapTile = {
 
-            x: this.cellside,
-            y: this.cellside,
-            cir_R: this.cellside,
+            x: this.tileSide,
+            y: this.tileSide,
+            cir_R: this.tileSide,
             in_r: this.r,
-            side: this.cellside,
-            cellnum: 1,
+            side: this.tileSide,
+            tileNumber: 1,
             isOccupied: false,
             state: {
                 type: "1",
@@ -71,7 +77,7 @@ export class GameEngine {
             }
         },
             this.deckData = [],
-            this.drawCards = []
+            this.drawCards = [],
             this.players = [],
             this.terrainData = [],
             this.gameStatus = {
@@ -87,21 +93,29 @@ export class GameEngine {
         console.log(this.map);
         this.map.forEach(row => {
             row.forEach(tile => {
-                if (tile.cellnum == Math.ceil(row.length / 2)) {
-                    console.log(tile.cellnum, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
-                    p1.selectedCard = p1.deck[0]
-                    tile.state.look = p1.selectedCard.look
+                if (tile.tileNumber == Math.ceil(row.length / 2)) {
+                    console.log(tile.tileNumber, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
+                    p1.selectedCard = defaultState
+                    p1.action = 'select'
+                    
+                   /*  p1.baseCard = p1.deck[p1.deck.length - 1]
+                    tile.state.look = p1.baseCard.look
                     tile.state.owner = p1.name
                     tile.state.type = 3
                     tile.isOccupied = true
+                    console.log(p1); */
                 }
-                if (tile.cellnum == this.map.length * row.length - Math.floor(row.length / 2)) {
-                    console.log(tile.cellnum, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
-                    p2.selectedCard = p2.deck[0]
-                    tile.state.look = p2.selectedCard.look
+                if (tile.tileNumber == this.map.length * row.length - Math.floor(row.length / 2)) {
+                    console.log(tile.tileNumber, Math.ceil(row.length / 2), this.map.length * row.length - Math.floor(row.length / 2));
+                    p2.selectedCard = defaultState
+                    p2.action = 'select'
+                    /* p2.baseCard = p1.deck[p2.deck.length - 1]
+                    tile.state.look = p2.baseCard.look
                     tile.state.owner = p2.name
                     tile.state.type = 3
                     tile.isOccupied = true
+                    console.log(p2); */
+
                 }
             })
         })
@@ -169,7 +183,7 @@ export class GameEngine {
         GameBar.forEach((gameBarBody) => {
             gameBarBody.gameBarSections.forEach((sections) => {
                 context.save();
-                context.fillStyle = '#423c6d';
+                context.fillStyle = '#42666d';
                 context.fillRect(sections.sx, sections.sy, sections.dx, sections.dy);
                 context.restore();
                 sections.subSections.forEach(sub => {
@@ -189,9 +203,12 @@ export class GameEngine {
         })
     }
     gameLogicCheck = () => {
+        this.map.forEach(tile => {
 
+        })
     }
     PlayerStatus = (sub) => {
+        context.fillStyle = this.activePlayer.color;
         context.save();
         context.fillText(sub.title, sub.sx, sub.sy);
         switch (sub.title) {
@@ -204,41 +221,74 @@ export class GameEngine {
             case "playerTurn":
                 context.fillText(this.activePlayer.id, sub.valueSx, sub.valueSy);
                 break;
+            case "cardDetails":
+                if (this.activePlayer.selectedCard.id != 999) {
+                    sub.subSections.forEach(sub => {
+                        context.fillText(sub.title, sub.sx, sub.sy);
+
+                        switch (sub.title) {
+                            case "cardName":
+                                context.fillText(this.activePlayer.selectedCard.unit.name, sub.valueSx, sub.valueSy);
+                                break;
+                            case "cardAttack":
+                                context.fillText(this.activePlayer.selectedCard.unit.damage, sub.valueSx, sub.valueSy);
+                                break;
+                            case "cardHP":
+                                context.fillText(this.activePlayer.selectedCard.unit.hp, sub.valueSx, sub.valueSy);
+                                break;
+
+
+                        }
+                    })
+                }
+                else {
+                    context.fillText("Select A Card", sub.valueSx, sub.valueSy);
+                }
+                break;
         }
+
         context.restore();
-        context.fillStyle = this.activePlayer.color;
 
     }
     Cards = (sub, click) => {
         context.save();
         context.fillStyle = "red"
-        let count = -1;
-        for (let i = 1; i <= 3; i++) {
-            for (let j = 1; j <= 10; j++) {
-                count++
-                let tempCell = {
-                    x: sub.sx * j / 5 + sub.sx / 1.16,
-                    y: sub.sy + i * sub.dy / 3 - 30,
-                    side: sub.dx / 5
-                }
-                this.drawImage({
-                    card: {
-                        look: this.activePlayer.deck[count].look,
-                        ...tempCell
-                    }
-                })
-                if (click) {
-                    if (OnMouseDownInBox(tempCell.x - tempCell.side / 2, tempCell.y - tempCell.side / 2, tempCell.side, tempCell.side)) {
-                        this.activePlayer.selectedCard = this.activePlayer.deck[count]
-                        console.log(this.activePlayer.selectedCard);
-                        context.fillRect(tempCell.x - tempCell.side, tempCell.y - tempCell.side, tempCell.side * 2, tempCell.side * 2);
-                    }
-                }
-                else {
-
+        context.strokeStyle = this.activePlayer.color
+        let offsetX = 1
+        let offsetY = 0
+        for (let cardNumber = 0; cardNumber < this.activePlayer.deck.length; cardNumber++) {
+            if (cardNumber % 10 == 0) {
+                offsetX = 1
+                offsetY++
+            }
+            let tempTile = {
+                x: sub.sx * offsetX / 5 + sub.sx / 1.16,
+                y: sub.sy + offsetY * sub.dy / 3 - 30,
+                side: sub.dx / 5
+            }
+            if (click) {
+                if (OnMouseDownInBox(tempTile.x - tempTile.side / 2, tempTile.y - tempTile.side / 2, tempTile.side, tempTile.side)) {
+                    this.activePlayer.selectedCard = this.activePlayer.deck[cardNumber]
+                    console.log("OnCardSelect", this.activePlayer.selectedCard.id);
                 }
             }
-            context.restore();
+            else {
+                if (this.activePlayer.deck[cardNumber].id == this.activePlayer.selectedCard.id) {
+                    context.arc(tempTile.x, tempTile.y, tempTile.side, 0, 360);
+                    context.stroke();
+                }
+
+
+            }
+            this.drawImage({
+                card: {
+                    look: this.activePlayer.deck[cardNumber].look,
+                    ...tempTile
+                }
+            })
+            offsetX++
+
+
         }
     }
     Deck = (sub, click) => {
@@ -250,11 +300,28 @@ export class GameEngine {
         context.restore();
         if (click) {
             if (OnMouseDownInBox(sub.sx, sub.sy, sub.dx, sub.dy)) {
-                if (this.gameStatus.playerTurn == 1) {
-                    this.gameStatus.playerTurn = 2
+                switch (sub.title) {
+                    case "drawCards":
+                        this.drawCard()
+                            .then((card) => {
+                                this.activePlayer.deck.push(card)
+                                this.activePlayer.deck = [...this.deckArranger(this.activePlayer.deck)]
+                            })
+                            .catch((error) => {
+                                alert(error)
+                            });
+                        break;
+                    case "delete":
+                        this.activePlayer.action = 'delete'
+                        break;
+                    case "endTurn":
+                        this.gameStatus.playerTurn == 1 ? this.gameStatus.playerTurn = 2 : this.gameStatus.playerTurn = 1;
+                        this.activePlayer = this.players[this.gameStatus.playerTurn - 1];
+                        break;
                 }
-                else this.gameStatus.playerTurn = 1
-                this.activePlayer = this.players[this.gameStatus.playerTurn - 1]
+            }
+            else{
+                this.activePlayer.action = 'select'
             }
         }
         else {
@@ -427,15 +494,26 @@ export class GameEngine {
     }
     //add the function call in the imageObj.onload
     mapDrawer2DVertical = () => {
+        let optionButton = {
+            x: 0,
+            y: 0,
+            dx: 20,
+            dy: 20,
+        }
         let img = new Image()
         img.src = "../assets/bg2.jpg";
         context.save();
         context.globalAlpha = 0.5;
-        /* context.drawImage(img, 0, 0, canvasW, canvasH); */
+        context.fillRect(optionButton.x, optionButton.y, optionButton.dx, optionButton.dy);
+        if (OnMouseDownInBox(optionButton.x, optionButton.y, optionButton.dx, optionButton.dy)) {
+            currentRenderScreen = "optionsScreen"
+        }
+        context.drawImage(img, 0, 0, canvasW, canvasH);
         /* this.grayScale(context, canvas); */
         context.restore();
         this.map.forEach((tileProps, j) => {
             tileProps.forEach((tile, i) => {
+
                 switch (this.mapType) {
                     case "tipped":
                         this.tippedHexDraw(tile)
@@ -444,22 +522,19 @@ export class GameEngine {
                         this.flatHexDraw(tile)
                         break;
                 }
-                context.fillRect(0, 0, 10, 10);
                 this.drawImage({
                     card: { look: this.terrainData[0].look, ...tile }
                 });
-                if (OnMouseDownInBox(0, 0, 10, 10)) {
-                    currentRenderScreen = "optionsScreen"
-                }
-                if (tile.isOccupied == true) {
-                    if (OnMouseHoverOverHex(tile)) {
-                        if (OnMousePressed()) {
-                            if (tile.state.type == 3)
-                                return
-                            else {
+                if (tile.isOccupied == true) { 
+                    if (OnMouseHoverOverHex(tile) && OnMousePressed()) {
+                        if (tile.state.type == 3)
+                            return
+                        else {
+                            if (this.activePlayer.action == "delete") {
                                 tile.isOccupied = false
                                 tile.state = { ...defaultState }
                             }
+
                         }
                     }
                     this.strokeHex(tile)
@@ -472,42 +547,33 @@ export class GameEngine {
                 }
                 else {
                     context.save()
-                    context.fillStyle = "red"
+                    context.fillStyle = "Green"
                     context.font = "8px Arial";
-                    context.fillText(tile.cellnum, tile.x, tile.y);
+                    context.fillText(tile.tileNumber, tile.x, tile.y);
                     context.restore()
-                    if (OnMouseHoverOverHex(tile)) {
-                        if (OnMousePressed()) {
-                            tile.state = {
-                                owner: this.activePlayer,
-                                look: this.activePlayer.selectedCard.look
+                    if (OnMouseHoverOverHex(tile) && OnMousePressed()) {
+                        if (this.activePlayer.selectedCard.id != 999) {
+                            console.log(this.activePlayer.selectedCard.id, this.activePlayer.deck[this.activePlayer.selectedCard.id].id);
+                            if (this.activePlayer.selectedCard.id == this.activePlayer.deck[this.activePlayer.selectedCard.id].id) {
+                                this.activePlayer.deck = this.activePlayer.deck.filter((card) => card.id != this.activePlayer.selectedCard.id)
+                                this.activePlayer.deck = [...this.deckArranger(this.activePlayer.deck)]
+                                tile.state = {
+                                    owner: this.activePlayer,
+                                    look: this.activePlayer.selectedCard.look
+                                }
+                                this.strokeHex(tile)
+                                tile.isOccupied = true;
+                                this.activePlayer.selectedCard = defaultState;
                             }
-
-                            this.strokeHex(tile)
-                            tile.isOccupied = true;
+                        }
+                        else {
+                            /* console.log("Select Card Please"); */
                         }
                     }
                 }
-
             })
         })
 
-    }
-    cardsDrawer = () => {
-        let scale = 100
-        deck.forEach((card, i) => {
-            context.drawImage(card.look, card.x, card.y, scale, scale)
-            if (OnMouseHoverOverHex({
-                x: card.x,
-                y: card.y,
-                in_r: card.in_r
-            })) {
-                context.clearRect(card.x, card.y, scale, scale)
-                context.strokeRect(card.x, card.y, scale, scale)
-                context.drawImage(card.look, card.x, card.y, scale, scale)
-
-            }
-        })
     }
     deckGenerator = async () => {
         let deck = [];
@@ -537,12 +603,12 @@ export class GameEngine {
         let I = this.initPosX;
         let J = this.initPosY;
         switch (mapType) {
-            case "tipped":
+            case MAPTYPES.Tipped:
                 closeX = this.tippedCloseX;
                 closeY = this.tippedCloseY;
                 yAxisMargin = 2.5;
                 break;
-            case "flat":
+            case MAPTYPES.Flat:
                 closeX = this.flatCloseX;
                 closeY = this.flatCloseY;
                 yAxisMargin = 1.87;
@@ -558,15 +624,15 @@ export class GameEngine {
                     ...this.mapTile,
                     state: { ...this.mapTile.state }
                 });
-                this.mapTile.x = this.cellside;
-                this.mapTile.y = this.cellside;
-                this.mapTile.cellnum++;
+                this.mapTile.x = this.tileSide;
+                this.mapTile.y = this.tileSide;
+                this.mapTile.tileNumber++;
             }
             map.push(inner_map);
             inner_map = [];
         }
 
-        this.mapTile.cellnum = 1;
+        this.mapTile.tileNumber = 1;
         console.log(map)
         return map;
     }
@@ -585,75 +651,144 @@ export class GameEngine {
     }
 
 
-    fillHex = (cell) => {
+    fillHex = (tile) => {
         context.save();
-        context.strokeStyle = cell.state.owner.color;
+        context.strokeStyle = tile.state.owner.color;
         context.beginPath();
-        context.moveTo(cell.x, cell.y);
-        context.moveTo(cell.x - cell.cir_R, cell.y)
-        context.lineTo(cell.x - cell.side / 2, cell.y - cell.in_r)
-        context.lineTo(cell.x + cell.side / 2, cell.y - cell.in_r)
-        context.lineTo(cell.x + cell.cir_R, cell.y);
-        context.lineTo(cell.x + cell.side / 2, cell.y + cell.in_r)
-        context.lineTo(cell.x - cell.side / 2, cell.y + cell.in_r)
+        context.moveTo(tile.x, tile.y);
+        context.moveTo(tile.x - tile.cir_R, tile.y)
+        context.lineTo(tile.x - tile.side / 2, tile.y - tile.in_r)
+        context.lineTo(tile.x + tile.side / 2, tile.y - tile.in_r)
+        context.lineTo(tile.x + tile.cir_R, tile.y);
+        context.lineTo(tile.x + tile.side / 2, tile.y + tile.in_r)
+        context.lineTo(tile.x - tile.side / 2, tile.y + tile.in_r)
         context.closePath();
-        context.fillStyle = cell.state.owner.color;
+        context.fillStyle = tile.state.owner.color;
         context.fill();
         context.restore();
     }
 
-    strokeHex = (cell) => {
+    strokeHex = (tile) => {
         context.save();
         context.beginPath();
-        context.moveTo(cell.x, cell.y);
-        context.moveTo(cell.x - cell.cir_R, cell.y)
-        context.lineTo(cell.x - cell.side / 2, cell.y - cell.in_r)
-        context.lineTo(cell.x + cell.side / 2, cell.y - cell.in_r)
-        context.lineTo(cell.x + cell.cir_R, cell.y);
-        context.lineTo(cell.x + cell.side / 2, cell.y + cell.in_r)
-        context.lineTo(cell.x - cell.side / 2, cell.y + cell.in_r)
+        context.moveTo(tile.x, tile.y);
+        context.moveTo(tile.x - tile.cir_R, tile.y)
+        context.lineTo(tile.x - tile.side / 2, tile.y - tile.in_r)
+        context.lineTo(tile.x + tile.side / 2, tile.y - tile.in_r)
+        context.lineTo(tile.x + tile.cir_R, tile.y);
+        context.lineTo(tile.x + tile.side / 2, tile.y + tile.in_r)
+        context.lineTo(tile.x - tile.side / 2, tile.y + tile.in_r)
         context.closePath();
         context.lineWidth = 5;
-        context.strokeStyle = cell.state.owner.color;
+        context.strokeStyle = tile.state.owner.color;
         context.stroke();
         context.restore();
     }
 
-    drawImage = (cell) => {
-        context.drawImage(cell.card.look, cell.card.x - cell.card.side, cell.card.y - cell.card.side, cell.card.side * 2, cell.card.side * 2);
+    drawImage = (tile) => {
+        if(tile.card.look)
+        context.drawImage(tile.card.look, tile.card.x - tile.card.side, tile.card.y - tile.card.side, tile.card.side * 2, tile.card.side * 2);
     }
-    prepareDeck = (deckData, name="") => {
+    prepareSharedDeck = (deckData, name = "Neutral", numOfCards) => {
         console.log(name);
         let tempDeck = []
-        for (let i = 1; i <= 30; i++) {
-            let card = deckData[Math.floor(Math.random() * 10)];
-            if(name!=""){
-                card["id"] = i;
-                card["owner"] = name;
-            }
+        for (let i = 0; i < 28 ; i++) {
+            let card = { ...deckData[0] };
+            card.id = i;
+            card.owner = name;
+            console.log(card);
             tempDeck.push(card);
         }
+        for (let i = 0; i < 10; i++) {
+            let card = { ...deckData[1] };
+            card.id = i;
+            card.owner = name;
+            console.log(card);
+            tempDeck.push(card);
+        }
+        for (let i = 0; i < 7; i++) {
+            let card = { ...deckData[2] };
+            card.id = i;
+            card.owner = name;
+            console.log(card);
+            tempDeck.push(card);
+        }
+        for (let i = 0; i < 5; i++) {
+            let card = { ...deckData[3] };
+            card.id = i;
+            card.owner = name;
+            console.log(card);
+            tempDeck.push(card);
+        }
+        for (let i = 0; i < 5; i++) {
+            let card = { ...deckData[4] };
+            card.id = i;
+            card.owner = name;
+            console.log(card);
+            tempDeck.push(card);
+        }
+        for (let i = 0; i < 3; i++) {
+            let card = { ...deckData[5] };
+            card.id = i;
+            card.owner = name;
+            console.log(card);
+            tempDeck.push(card);
+        }
+        this
+        console.log(this.deckArranger(this.deckShuffler(tempDeck)));
+        
+        return this.deckArranger(tempDeck)
+    }
+    prepareDeck = (deckData, name = "", numOfCards) => {
+        console.log(name);
+        let tempDeck = []
+        for (let i = 0; i < numOfCards; i++) {
+            let card = { ...deckData[Math.floor(Math.random() * deckData.length)] };
+            card.id = i;
+            card.owner = name;
+            console.log(card);
+            tempDeck.push(card);
+        }
+        console.log(tempDeck);
         return tempDeck
+    }
+    drawCard = () => {
+        return new Promise((resolve, reject) => {
+            let message;
+            let allowAction = true
+            if (this.drawCards.length == 0) {
+                allowAction = false
+                message = "No Cards Left";
+            }
+            if (this.activePlayer.deck.length == 30) {
+                allowAction = false
+                message = "Max Number In Hand";
+            }
+            if (allowAction)
+                resolve(this.drawCards.pop())
+            else
+                reject(message)
+        })
     }
     start = async (self) => {
         console.log(self);
         this.deckData = await this.deckGenerator()
         this.terrainData = await this.terrainGenerator()
-        this.drawCards = this.prepareDeck(this.deckData)
+        this.drawCards = this.prepareSharedDeck(this.deckData, "Neutral", 30)
         canvas.setAttribute("width", canvasW)
         canvas.setAttribute("height", canvasH)
         this.players = [
             new Player({
                 id: 1,
                 get name() { return "Lord" },
-                deck: [...this.prepareDeck(this.deckData, "Lord")],
+                deck: [...this.prepareDeck(this.deckData, "Lord", 0)],
                 hp: 100,
                 color: "darkblue"
             }),
             new Player({
                 id: 2,
                 get name() { return "Worm" },
-                deck: [...this.prepareDeck(this.deckData, "Worm")],
+                deck: [...this.prepareDeck(this.deckData, "Worm", 0)],
                 hp: 100,
                 color: "darkred"
             }),
@@ -685,6 +820,18 @@ export class GameEngine {
             })
         })
         latestValue = zoom
+    }
+
+    deckArranger(deck) {
+        return deck.map((card, index) => {
+            card.id = index
+            return card
+        })
+    }
+    deckShuffler(deck) {
+        return deck.sort((a,b)=>{
+            return (Math.random() * (1 - -1) + -1)
+        })
     }
 
 }

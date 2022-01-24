@@ -2,7 +2,8 @@
 class Card{
 
     constructor(unit){
-
+        this.id;
+        this.owner;
         this.x=100;
         this.y=window.outerHeight - 300
         this.in_r=100 * Math.sqrt(3) / 2;;
