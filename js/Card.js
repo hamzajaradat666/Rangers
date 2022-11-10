@@ -12,7 +12,6 @@ class Card{
         this.side=window.outerWidth / 100 * 2
         this.look = new Image();
         this.look.src = this.unit.look;
-
     }
 
 

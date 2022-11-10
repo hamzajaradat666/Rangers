@@ -276,7 +276,6 @@ export class GameEngine {
             else {
                 if (this.activePlayer.deck[cardNumber].id == this.activePlayer.selectedCard.id) {
                     context.arc(tempTile.x, tempTile.y, tempTile.side, 0, 360);
-                    context.stroke();
                 }
 
 
